@@ -87,7 +87,7 @@ async function sendeAnbieterVorschlag(form) {
   });
   if (!res.ok) throw new Error("Formspree Fehler");
   return res.json();
-}
+
 
 async function sendeAnmeldung(ereignisId, form) {
   return sbFetch("anmeldungen", {
