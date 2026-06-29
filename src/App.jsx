@@ -39,15 +39,29 @@ async function ladeAnbieter() {
 }
 
 async function sendeAnbieterVorschlag(form) {
-  return sbFetch("anbieter", {
-    method: "POST", prefer: "return=minimal",
+  const res = await fetch("https://formspree.io/f/mnjygwlq", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
     body: JSON.stringify({
-      name: form.name, typ: form.typ, ort: form.ort, adresse: form.adresse,
-      angebot: form.angebot, tage: form.tage, von: form.von, bis: form.bis,
-      telefon: form.telefon, email: form.email, beschreibung: form.beschreibung,
-      freigegeben: false
+      _subject: "Neuer RegioMap-Eintrag: " + form.name,
+      name: form.name,
+      typ: form.typ,
+      ort: form.ort,
+      adresse: form.adresse,
+      angebot: form.angebot,
+      tage: form.tage.join(", "),
+      von: form.von,
+      bis: form.bis,
+      telefon: form.telefon,
+      email: form.email,
+      beschreibung: form.beschreibung
     })
   });
+  if (!res.ok) throw new Error("Formspree Fehler");
+  return res.json();
 }
 
 async function sendeAnmeldung(ereignisId, form) {
