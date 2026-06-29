@@ -39,12 +39,66 @@ async function ladeAnbieter() {
 }
 
 async function sendeAnbieterVorschlag(form) {
-  const res = await fetch("https://formspree.io/f/mnjygwlq", {
+  // 1. Koordinaten automatisch aus Adresse berechnen
+  var lat = null;
+  var lng = null;
+  try {
+    var adresseKomplett = (form.adresse ? form.adresse + ", " : "") + form.ort + ", Deutschland";
+    var geoRes = await fetch(
+      "https://nominatim.openstreetmap.org/search?q=" +
+      encodeURIComponent(adresseKomplett) +
+      "&format=json&limit=1&countrycodes=de",
+      { headers: { "Accept-Language": "de" } }
+    );
+    var geoData = await geoRes.json();
+    if (geoData && geoData.length > 0) {
+      lat = parseFloat(geoData[0].lat);
+      lng = parseFloat(geoData[0].lon);
+    } else {
+      // Fallback: nur Ort ohne Straße versuchen
+      var geoRes2 = await fetch(
+        "https://nominatim.openstreetmap.org/search?q=" +
+        encodeURIComponent(form.ort + ", Deutschland") +
+        "&format=json&limit=1&countrycodes=de",
+        { headers: { "Accept-Language": "de" } }
+      );
+      var geoData2 = await geoRes2.json();
+      if (geoData2 && geoData2.length > 0) {
+        lat = parseFloat(geoData2[0].lat);
+        lng = parseFloat(geoData2[0].lon);
+      }
+    }
+  } catch (e) {
+    // Geocoding fehlgeschlagen – Koordinaten bleiben null
+    // Eintrag wird trotzdem gespeichert, Koordinaten müssen manuell ergänzt werden
+  }
+
+  // 2. Eintrag in Supabase speichern (mit oder ohne Koordinaten)
+  await sbFetch("anbieter", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
+    prefer: "return=minimal",
+    body: JSON.stringify({
+      name: form.name,
+      typ: form.typ,
+      ort: form.ort,
+      adresse: form.adresse,
+      angebot: form.angebot,
+      tage: form.tage,
+      von: form.von,
+      bis: form.bis,
+      telefon: form.telefon,
+      email: form.email,
+      beschreibung: form.beschreibung,
+      lat: lat,
+      lng: lng,
+      freigegeben: false
+    })
+  });
+
+  // 3. Benachrichtigung per Formspree
+  var res = await fetch("https://formspree.io/f/mnjygwlq", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
     body: JSON.stringify({
       _subject: "Neuer RegioMap-Eintrag: " + form.name,
       name: form.name,
@@ -53,11 +107,9 @@ async function sendeAnbieterVorschlag(form) {
       adresse: form.adresse,
       angebot: form.angebot,
       tage: form.tage.join(", "),
-      von: form.von,
-      bis: form.bis,
+      koordinaten: lat ? (lat + ", " + lng) : "nicht gefunden – bitte manuell eintragen",
       telefon: form.telefon,
-      email: form.email,
-      beschreibung: form.beschreibung
+      email: form.email
     })
   });
   if (!res.ok) throw new Error("Formspree Fehler");
