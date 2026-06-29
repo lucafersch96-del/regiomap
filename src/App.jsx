@@ -578,8 +578,6 @@ function Karte(props) {
         <button onClick={function(){setZoom(1);setPan({x:0,y:0});}} style={{width:36,height:36,borderRadius:8,border:"none",background:"white",fontSize:13,cursor:"pointer"}}>{"o"}</button>
       </div>
     </div>
-  );
-}
 
 /* ─── Sterne ─── */
 function Sterne(props) {
