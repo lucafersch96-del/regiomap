@@ -39,30 +39,30 @@ async function ladeAnbieter() {
 }
 
 async function sendeAnbieterVorschlag(form) {
-  const res = await fetch("https://formspree.io/f/mnjygwlq", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    body: JSON.stringify({
-      _subject: "Neuer RegioMap-Eintrag: " + form.name,
-      name: form.name,
-      typ: form.typ,
-      ort: form.ort,
-      adresse: form.adresse,
-      angebot: form.angebot,
-      tage: form.tage.join(", "),
-      von: form.von,
-      bis: form.bis,
-      telefon: form.telefon,
-      email: form.email,
-      beschreibung: form.beschreibung
-    })
-  });
-  if (!res.ok) throw new Error("Formspree Fehler");
-  return res.json();
-}
+  var lat = null;
+  var lng = null;
+  try {
+    var adresseKomplett = (form.adresse ? form.adresse + ", " : "") + form.ort + ", Deutschland";
+    var geoRes = await fetch(
+      "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(adresseKomplett) + "&format=json&limit=1&countrycodes=de",
+      { headers: { "Accept-Language": "de" } }
+    );
+    var geoData = await geoRes.json();
+    if (geoData && geoData.length > 0) {
+      lat = parseFloat(geoData[0].lat);
+      lng = parseFloat(geoData[0].lon);
+    } else {
+      var geoRes2 = await fetch(
+        "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(form.ort + ", Deutschland") + "&format=json&limit=1&countrycodes=de",
+        { headers: { "Accept-Language": "de" } }
+      );
+      var geoData2 = await geoRes2.json();
+      if (geoData2 && geoData2.length > 0) {
+        lat = parseFloat(geoData2[0].lat);
+        lng = parseFloat(geoData2[0].lon);
+      }
+    }
+  } catch(e) {}
 
   await sbFetch("anbieter", {
     method: "POST", prefer: "return=minimal",
@@ -87,7 +87,7 @@ async function sendeAnbieterVorschlag(form) {
   });
   if (!res.ok) throw new Error("Formspree Fehler");
   return res.json();
-
+}
 
 async function sendeAnmeldung(ereignisId, form) {
   return sbFetch("anmeldungen", {
