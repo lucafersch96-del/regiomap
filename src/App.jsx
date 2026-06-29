@@ -330,31 +330,179 @@ function teileAnbieter(a) {
 
 /* ─── Karte ─── */
 function Karte(props) {
-  var anbieter=props.anbieter, onSelect=props.onSelect, zentrum=props.zentrum, radius=props.radius;
-  var [pan,setPan]=useState({x:0,y:0});
-  var [zoom,setZoom]=useState(1);
-  var [ready,setReady]=useState(false);
-  var dragging=useRef(false), dragStart=useRef(null), lastPinch=useRef(null);
-  var W=400, H=320;
+  var anbieter = props.anbieter;
+  var onSelect = props.onSelect;
+  var zentrum  = props.zentrum;
+  var radius   = props.radius;
 
-  useEffect(function(){
-    var t=setTimeout(function(){setReady(true);},80);
-    return function(){clearTimeout(t);};
-  },[]);
+  var mapRef      = useRef(null);   // DOM-Container
+  var leafletRef  = useRef(null);   // L.map Instanz
+  var markersRef  = useRef([]);     // alle Marker
+  var circleRef   = useRef(null);   // Radius-Kreis
+  var [fehler, setFehler] = useState(false);
 
-  var all = anbieter.concat(zentrum?[{lat:zentrum.lat,lng:zentrum.lng}]:[]);
-  var lats = all.length ? all.map(function(a){return a.lat;}) : [50.8,51.2];
-  var lngs = all.length ? all.map(function(a){return a.lng;}) : [6.8,7.5];
-  var pad=0.06;
-  var minLat=Math.min.apply(null,lats)-pad, maxLat=Math.max.apply(null,lats)+pad;
-  var minLng=Math.min.apply(null,lngs)-pad, maxLng=Math.max.apply(null,lngs)+pad;
+  // Leaflet CSS + JS einmalig laden
+  useEffect(function () {
+    if (document.getElementById("leaflet-css")) {
+      initMap();
+      return;
+    }
+    var css = document.createElement("link");
+    css.id   = "leaflet-css";
+    css.rel  = "stylesheet";
+    css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    document.head.appendChild(css);
 
-  function toXY(lat,lng) {
-    return {
-      x:((lng-minLng)/(maxLng-minLng))*W*zoom+pan.x,
-      y:(H-((lat-minLat)/(maxLat-minLat))*H)*zoom+pan.y
-    };
+    var js    = document.createElement("script");
+    js.id     = "leaflet-js";
+    js.src    = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    js.onload = function () { initMap(); };
+    js.onerror = function () { setFehler(true); };
+    document.head.appendChild(js);
+
+    return function () {};
+  }, []);
+
+  function initMap() {
+    if (leafletRef.current || !mapRef.current || !window.L) return;
+    try {
+      var L   = window.L;
+      var map = L.map(mapRef.current, {
+        center: [51.02, 7.15],
+        zoom: 11,
+        zoomControl: true
+      });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap"
+      }).addTo(map);
+      leafletRef.current = map;
+      aktualisiereMarker();
+      aktualisiereKreis();
+    } catch (e) {
+      setFehler(true);
+    }
   }
+
+  // Marker neu setzen wenn Anbieter sich ändert
+  useEffect(function () {
+    if (!leafletRef.current || !window.L) return;
+    aktualisiereMarker();
+  }, [anbieter]);
+
+  // Radius-Kreis neu setzen
+  useEffect(function () {
+    if (!leafletRef.current || !window.L) return;
+    aktualisiereKreis();
+  }, [zentrum, radius]);
+
+  function aktualisiereMarker() {
+    var L   = window.L;
+    var map = leafletRef.current;
+
+    // alte Marker entfernen
+    markersRef.current.forEach(function (m) { m.remove(); });
+    markersRef.current = [];
+
+    anbieter.forEach(function (a) {
+      if (!a.lat || !a.lng) return;
+      var typ   = TYPEN.find(function (t) { return t.id === a.typ; });
+      var farbe = FARBEN[a.typ] || "#2d6a4f";
+      var hasKal = a.kalender && a.kalender.length > 0;
+
+      var icon = L.divIcon({
+        className: "",
+        iconSize:   [40, 40],
+        iconAnchor: [20, 20],
+        html:
+          '<div style="background:' + farbe + ';color:white;border-radius:50%;' +
+          'width:40px;height:40px;display:flex;align-items:center;justify-content:center;' +
+          'font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.35);border:2.5px solid white;' +
+          'position:relative;">' +
+            (typ ? typ.icon : "📍") +
+            (hasKal
+              ? '<span style="position:absolute;top:-4px;right:-4px;background:#e63946;' +
+                'border-radius:50%;width:14px;height:14px;border:2px solid white;"></span>'
+              : "") +
+          "</div>"
+      });
+
+      var marker = L.marker([a.lat, a.lng], { icon: icon })
+        .addTo(map)
+        .on("click", function () { onSelect(a); });
+
+      markersRef.current.push(marker);
+    });
+
+    // Karte auf alle Marker zoomen (falls vorhanden)
+    if (markersRef.current.length > 0) {
+      var group = L.featureGroup(markersRef.current);
+      map.fitBounds(group.getBounds().pad(0.15));
+    }
+  }
+
+  function aktualisiereKreis() {
+    var L   = window.L;
+    var map = leafletRef.current;
+
+    if (circleRef.current) { circleRef.current.remove(); circleRef.current = null; }
+
+    if (zentrum && radius) {
+      circleRef.current = L.circle([zentrum.lat, zentrum.lng], {
+        radius:      radius * 1000,   // km → m
+        color:       "#2d6a4f",
+        fillColor:   "#2d6a4f",
+        fillOpacity: 0.07,
+        weight:      2,
+        dashArray:   "6 4"
+      }).addTo(map);
+
+      // Karte auf Kreis zoomen
+      map.fitBounds(circleRef.current.getBounds().pad(0.1));
+    }
+  }
+
+  // invalidateSize nach Tab-Wechsel
+  useEffect(function () {
+    if (!leafletRef.current) return;
+    setTimeout(function () {
+      if (leafletRef.current) leafletRef.current.invalidateSize();
+    }, 100);
+  });
+
+  if (fehler) return (
+    <div style={{height:380,display:"flex",flexDirection:"column",alignItems:"center",
+      justifyContent:"center",color:"#c62828",gap:8,padding:20,textAlign:"center"}}>
+      <div style={{fontSize:32}}>{"🗺️"}</div>
+      <div style={{fontWeight:600}}>{"Karte konnte nicht geladen werden."}</div>
+      <div style={{fontSize:13,color:"#888"}}>{"Bitte Internetverbindung prüfen."}</div>
+    </div>
+  );
+
+  return (
+    <div style={{position:"relative"}}>
+      <div
+        ref={mapRef}
+        style={{height:420,width:"100%",background:"#e8f0e0"}}
+      />
+      {/* Legende */}
+      <div style={{display:"flex",flexWrap:"wrap",gap:6,padding:"10px 12px"}}>
+        {TYPEN.map(function (t) {
+          return (
+            <span key={t.id} style={{display:"flex",alignItems:"center",gap:4,fontSize:11,
+              background:FARBEN[t.id]+"22",color:FARBEN[t.id],
+              padding:"3px 8px",borderRadius:16,fontWeight:500}}>
+              {t.icon+" "+t.label}
+            </span>
+          );
+        })}
+        <span style={{display:"flex",alignItems:"center",gap:4,fontSize:11,
+          background:"#fdecea",color:"#e63946",padding:"3px 8px",borderRadius:16,fontWeight:500}}>
+          {"🔴 = Kalender-Termin"}
+        </span>
+      </div>
+    </div>
+  );
+}
 
   function onTouchStart(e) {
     if(e.touches.length===1){dragging.current=true;dragStart.current={x:e.touches[0].clientX-pan.x,y:e.touches[0].clientY-pan.y};}
