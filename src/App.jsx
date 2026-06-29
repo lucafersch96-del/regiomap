@@ -577,9 +577,10 @@ function Karte(props) {
         <button onClick={function(){setZoom(function(z){return Math.max(0.5,z*0.77);});}} style={{width:36,height:36,borderRadius:8,border:"none",background:"white",fontSize:18,cursor:"pointer",fontWeight:700}}>{"-"}</button>
         <button onClick={function(){setZoom(1);setPan({x:0,y:0});}} style={{width:36,height:36,borderRadius:8,border:"none",background:"white",fontSize:13,cursor:"pointer"}}>{"o"}</button>
       </div>
-    </div>
+</div>
+  );
+}
 
-/* ─── Sterne ─── */
 function Sterne(props) {
   var wert=props.wert||0, onChange=props.onChange, readonly=props.readonly, gross=props.gross;
   var s=gross?28:18;
