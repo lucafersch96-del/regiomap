@@ -955,14 +955,15 @@ function EintragenSheet(props) {
 }
 
 /* ─── HauptApp ─── */
-function HauptApp() {
+function HauptApp(props) {
+  var startEintragen=props.startEintragen||false;
   var [anbieter,setAnbieter]=useState([]);
   var [laden,setLaden]=useState(true);
   var [fehler,setFehler]=useState(null);
   var [ansicht,setAnsicht]=useState("liste");
   var [selected,setSelected]=useState(null);
   var [filterOffen,setFilterOffen]=useState(false);
-  var [eintragenOffen,setEintragenOffen]=useState(false);
+  var [eintragenOffen,setEintragenOffen]=useState(startEintragen);
   var [saisonOffen,setSaisonOffen]=useState(false);
   var [userPos,setUserPos]=useState(null);
   var [filter,setFilter]=useState({typ:"",produkt:"",tag:"",text:""});
@@ -1006,7 +1007,7 @@ function HauptApp() {
   var activeFilters=[filter.typ,filter.produkt,filter.tag,filter.text,zentrum,nurHeute||null,nurFavoriten||null].filter(Boolean).length;
 
   return (
-    <div style={{minHeight:"100vh",background:"#f7f5f0",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",maxWidth:480,margin:"0 auto",display:"flex",flexDirection:"column"}}>
+    <div style={{minHeight:"100vh",background:"#2d6a4f",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",maxWidth:480,margin:"0 auto",display:"flex",flexDirection:"column"}}>
       <div style={{background:"linear-gradient(135deg,#2d6a4f,#40916c)",color:"white",position:"sticky",top:0,zIndex:50}}>
         <div style={{padding:"14px 16px 0"}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
@@ -1107,6 +1108,7 @@ function HauptApp() {
 /* ─── Startbildschirm ─── */
 function Startbildschirm(props) {
   var onEnter=props.onEnter;
+  var onEintragen=props.onEintragen;
   var [phase,setPhase]=useState(0);
   var [zooming,setZooming]=useState(false);
   var [gone,setGone]=useState(false);
@@ -1194,7 +1196,7 @@ function Startbildschirm(props) {
             <div style={{fontSize:15,fontWeight:700}}>{"Anbieter entdecken"}</div>
             <div style={{fontSize:11,opacity:.62,marginTop:2}}>{"Karte & Liste"}</div>
           </button>
-          <button onClick={go} style={{background:"rgba(255,255,255,0.93)",color:"#2d4a1e",border:"2px solid #2d6a4f",borderRadius:18,padding:"14px 30px",cursor:"pointer",boxShadow:"0 5px 22px rgba(0,0,0,.18)",minWidth:160,textAlign:"center"}}>
+          <button onClick={function(){if(onEintragen)onEintragen();}} style={{background:"rgba(255,255,255,0.93)",color:"#2d4a1e",border:"2px solid #2d6a4f",borderRadius:18,padding:"14px 30px",cursor:"pointer",boxShadow:"0 5px 22px rgba(0,0,0,.18)",minWidth:160,textAlign:"center"}}>
             <div style={{fontSize:26,marginBottom:4}}>{"✏️"}</div>
             <div style={{fontSize:15,fontWeight:700}}>{"Anbieter vorschlagen"}</div>
             <div style={{fontSize:11,opacity:.62,marginTop:2}}>{"Eintrag einreichen"}</div>
@@ -1207,5 +1209,11 @@ function Startbildschirm(props) {
 
 export default function App() {
   var [started,setStarted]=useState(false);
-  return started ? <HauptApp/> : <Startbildschirm onEnter={function(){setStarted(true);}} />;
+  var [direktEintragen,setDirektEintragen]=useState(false);
+  return started
+    ? <HauptApp startEintragen={direktEintragen}/>
+    : <Startbildschirm
+        onEnter={function(){setStarted(true);setDirektEintragen(false);}}
+        onEintragen={function(){setStarted(true);setDirektEintragen(true);}}
+      />;
 }
