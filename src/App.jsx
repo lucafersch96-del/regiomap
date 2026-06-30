@@ -317,7 +317,12 @@ function Karte(props) {
       if (leafletRef.current || !mapRef.current || !window.L) return;
       try {
         var L   = window.L;
-        var map = L.map(mapRef.current, { center:[51.02,7.15], zoom:11 });
+        // Startzoom: wenn userPos vorhanden auf Standort zoomen, sonst NRW
+        var startCenter = props.userPos
+          ? [props.userPos.lat, props.userPos.lng]
+          : [51.4, 7.2];
+        var startZoom = props.userPos ? 11 : 9;
+        var map = L.map(mapRef.current, { center: startCenter, zoom: startZoom });
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: "© OpenStreetMap"
         }).addTo(map);
@@ -372,10 +377,16 @@ function Karte(props) {
           + (hasKal ? '<span style="position:absolute;top:-4px;right:-4px;background:#e63946;border-radius:50%;width:14px;height:14px;border:2px solid white;"></span>' : "")
           + "</div>"
       });
-      var marker = L.marker([a.lat,a.lng], {icon:icon}).addTo(map).on("click", function() { onSelect(a); });
+      var marker = L.marker([a.lat,a.lng], {icon:icon}).addTo(map).on("click", function(e) {
+        // stopPropagation verhindert dass Klick durch die Karte geht
+        L.DomEvent.stopPropagation(e);
+        onSelect(a);
+      });
       markersRef.current.push(marker);
     });
-    if (markersRef.current.length > 0) {
+    // Nur auf Marker zoomen wenn kein userPos gesetzt –
+    // bei userPos bleibt der Standort-Zoom erhalten
+    if (markersRef.current.length > 0 && !props.userPos) {
       var group = L.featureGroup(markersRef.current);
       map.fitBounds(group.getBounds().pad(0.15));
     }
@@ -411,15 +422,15 @@ function Karte(props) {
   );
 
   return (
-    <div>
+    <div style={{position:"relative",zIndex:1}}>
       {laden && (
         <div style={{height:420,display:"flex",alignItems:"center",justifyContent:"center",background:"#e8f0e0",flexDirection:"column",gap:8,color:"#5a8a5a"}}>
           <div style={{fontSize:28}}>{"🗺️"}</div>
           <div style={{fontSize:13}}>{"Karte wird geladen..."}</div>
         </div>
       )}
-      <div ref={mapRef} style={{height:420,width:"100%",display:laden?"none":"block"}}/>
-      <div style={{display:"flex",flexWrap:"wrap",gap:6,padding:"10px 12px"}}>
+      <div ref={mapRef} style={{height:420,width:"100%",display:laden?"none":"block",zIndex:1}}/>
+      <div style={{display:"flex",flexWrap:"wrap",gap:6,padding:"10px 12px",position:"relative",zIndex:2}}>
         {TYPEN.map(function(t) {
           return (
             <span key={t.id} style={{display:"flex",alignItems:"center",gap:4,fontSize:11,
