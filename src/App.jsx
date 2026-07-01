@@ -132,7 +132,7 @@ var TYPEN = [
   { id: "hofladen", label: "Hofladen / Bauernhof", icon: "🚜" },
   { id: "selbsternte", label: "Selbsternte", icon: "🧺" },
   { id: "automat", label: "Hof-Automat", icon: "🤖" },
-  { id: "gaertnerei", label: "Gaertnerei / Blumen", icon: "🌸" },
+  { id: "gaertnerei", label: "Gärtnerei / Blumen", icon: "🌸" },
   { id: "direktvermarkter", label: "Direktvermarkter", icon: "🍯" }
 ];
 
@@ -146,41 +146,41 @@ var FARBEN = {
 var PRODUKTE = [
   { id: "", label: "Alle", icon: "🌿", kw: [] },
   { id: "eier", label: "Eier", icon: "🥚", kw: ["ei","eier"] },
-  { id: "gemuese", label: "Gemuese", icon: "🥦", kw: ["gemuese","kartoffel","moehre","tomate","zucchini","kuerbis"] },
+  { id: "gemuese", label: "Gemüse", icon: "🥦", kw: ["gemüse","kartoffel","möhre","tomate","zucchini","kürbis"] },
   { id: "obst", label: "Obst", icon: "🍎", kw: ["obst","apfel","erdbeere","kirsche","beere"] },
-  { id: "milch", label: "Milch & Kaese", icon: "🧀", kw: ["milch","kaese","butter","joghurt"] },
+  { id: "milch", label: "Milch & Käse", icon: "🧀", kw: ["milch","käse","butter","joghurt"] },
   { id: "fleisch", label: "Fleisch", icon: "🥩", kw: ["fleisch","wurst","schwein","rind","lamm"] },
   { id: "honig", label: "Honig", icon: "🍯", kw: ["honig","pollen","imker"] },
-  { id: "brot", label: "Brot", icon: "🍞", kw: ["brot","broetchen","kuchen","back"] },
-  { id: "blumen", label: "Blumen", icon: "💐", kw: ["blume","pflanze","gaertnerei"] }
+  { id: "brot", label: "Brot", icon: "🍞", kw: ["brot","brötchen","kuchen","back"] },
+  { id: "blumen", label: "Blumen", icon: "💐", kw: ["blume","pflanze","gärtnerei"] }
 ];
 
 var SAISON = [
-  { m:1,  p:["Lagergemuese","Kohl","Aepfel","Kartoffeln"] },
-  { m:2,  p:["Lagergemuese","Kohl","Feldsalat"] },
+  { m:1,  p:["Lagergemüse","Kohl","Äpfel","Kartoffeln"] },
+  { m:2,  p:["Lagergemüse","Kohl","Feldsalat"] },
   { m:3,  p:["Spinat","Rhabarber","Radieschen","Spargel"] },
   { m:4,  p:["Spargel","Rhabarber","Spinat","Radieschen"] },
   { m:5,  p:["Spargel","Erdbeeren","Salat","Kohlrabi"] },
   { m:6,  p:["Erdbeeren","Kirschen","Erbsen","Zucchini","Blumenkohl"] },
   { m:7,  p:["Tomaten","Zucchini","Gurken","Himbeeren","Heidelbeeren"] },
-  { m:8,  p:["Tomaten","Mais","Pflaume","Paprika","Sonnenblumen","Kuerbis"] },
-  { m:9,  p:["Aepfel","Birnen","Kuerbis","Kartoffeln","Trauben"] },
-  { m:10, p:["Aepfel","Kuerbis","Kartoffeln","Rote Bete","Nuesse"] },
-  { m:11, p:["Kohl","Lagergemuese","Feldsalat","Aepfel"] },
-  { m:12, p:["Kohl","Feldsalat","Lagergemuese","Kartoffeln"] }
+  { m:8,  p:["Tomaten","Mais","Pflaume","Paprika","Sonnenblumen","Kürbis"] },
+  { m:9,  p:["Äpfel","Birnen","Kürbis","Kartoffeln","Trauben"] },
+  { m:10, p:["Äpfel","Kürbis","Kartoffeln","Rote Bete","Nüsse"] },
+  { m:11, p:["Kohl","Lagergemüse","Feldsalat","Äpfel"] },
+  { m:12, p:["Kohl","Feldsalat","Lagergemüse","Kartoffeln"] }
 ];
 
-var MONATE = ["Januar","Februar","Maerz","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+var MONATE = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 
 var ORTE = [
   { name:"Bergisch Gladbach", al:["bergisch gladbach","gladbach"], plz:["51427","51429","51465","51467","51469"], lat:51.002, lng:7.130 },
   { name:"Overath",           al:["overath"],                      plz:["51491"],                                lat:50.988, lng:7.271 },
-  { name:"Roesrath",          al:["rösrath","roesrath"],           plz:["51503"],                                lat:50.905, lng:7.185 },
-  { name:"Kuerten",           al:["kürten","kuerten"],             plz:["51515"],                                lat:51.050, lng:7.248 },
+  { name:"Rösrath",           al:["rösrath","roesrath"],           plz:["51503"],                                lat:50.905, lng:7.185 },
+  { name:"Kürten",            al:["kürten","kuerten"],             plz:["51515"],                                lat:51.050, lng:7.248 },
   { name:"Odenthal",          al:["odenthal"],                     plz:["51519"],                                lat:51.033, lng:7.117 },
   { name:"Wermelskirchen",    al:["wermelskirchen"],               plz:["42929"],                                lat:51.145, lng:7.213 },
   { name:"Leverkusen",        al:["leverkusen"],                   plz:["51373","51375","51377","51379","51381"], lat:51.045, lng:7.003 },
-  { name:"Koeln",             al:["köln","koeln","cologne"],       plz:["50667","50668","50670","50672","50674"], lat:50.938, lng:6.960 },
+  { name:"Köln",              al:["köln","koeln","cologne"],       plz:["50667","50668","50670","50672","50674"], lat:50.938, lng:6.960 },
   { name:"Bonn",              al:["bonn"],                         plz:["53111","53113","53115"],                 lat:50.733, lng:7.100 },
   { name:"Solingen",          al:["solingen"],                     plz:["42651","42653","42655"],                 lat:51.178, lng:7.084 },
   { name:"Remscheid",         al:["remscheid"],                    plz:["42853","42855"],                        lat:51.179, lng:7.189 },
@@ -188,11 +188,11 @@ var ORTE = [
 ];
 
 var BEISPIEL = [
-  { id:1, name:"Hof Mueller", typ:"hofladen", ort:"Bergisch Gladbach", adresse:"Hauptstr. 12",
-    angebot:"Gemuese, Kartoffeln, Eier", produkte:["gemuese","eier"], tage:["Di","Do","Sa"],
-    von:"08:00", bis:"18:00", beschreibung:"Frisches Gemuese aus eigenem Anbau seit 1978.",
+  { id:1, name:"Hof Müller", typ:"hofladen", ort:"Bergisch Gladbach", adresse:"Hauptstr. 12",
+    angebot:"Gemüse, Kartoffeln, Eier", produkte:["gemuese","eier"], tage:["Di","Do","Sa"],
+    von:"08:00", bis:"18:00", beschreibung:"Frisches Gemüse aus eigenem Anbau seit 1978.",
     lat:51.002, lng:7.132, telefon:"02202 123456", email:"hof@example.de",
-    story:"Familie Mueller bewirtschaftet den Hof seit drei Generationen.",
+    story:"Familie Müller bewirtschaftet den Hof seit drei Generationen.",
     wiederholend:false, kalender:[
       { id:1, typ:"ernte", titel:"Kartoffelernte", datum:"2026-08-15",
         beschreibung:"Kartoffeln selbst ernten!", plaetze:20, anmeldungen:7,
@@ -200,29 +200,29 @@ var BEISPIEL = [
     ]
   },
   { id:2, name:"Familie Schreiber", typ:"selbsternte", ort:"Overath", adresse:"Feldweg 3",
-    angebot:"Erdbeeren, Kuerbisse", produkte:["obst","gemuese"], tage:["Sa","So"],
-    von:"09:00", bis:"17:00", beschreibung:"Selbstpfluecken fuer die ganze Familie!",
+    angebot:"Erdbeeren, Kürbisse", produkte:["obst","gemuese"], tage:["Sa","So"],
+    von:"09:00", bis:"17:00", beschreibung:"Selbstpflücken für die ganze Familie!",
     lat:50.988, lng:7.271, telefon:"02204 987654", email:"schreiber@example.de",
-    story:"Seit 2008 oeffnen wir unsere Felder fuer Menschen die wissen moechten woher ihr Essen kommt.",
+    story:"Seit 2008 öffnen wir unsere Felder für Menschen, die wissen möchten, woher ihr Essen kommt.",
     wiederholend:true, wiederholungsMonate:[5,6,8,10], wiederholungsTitel:"Saisonale Selbsternte",
     kalender:[
       { id:3, typ:"pflück", titel:"Erdbeer-Saison", datum:"2026-06-20",
-        beschreibung:"Erdbeeren selbstpfluecken!", plaetze:null, anmeldungen:12,
+        beschreibung:"Erdbeeren selbst pflücken!", plaetze:null, anmeldungen:12,
         stornoFristTage:2, stornoGebuehr:0, mindestAnmeldungen:null }
     ]
   },
   { id:3, name:"Wochenmarkt Bensberg", typ:"wochenmarkt", ort:"Bergisch Gladbach", adresse:"Marktplatz",
-    angebot:"Kaese, Obst, Gemuese, Brot", produkte:["milch","obst","gemuese","brot"],
+    angebot:"Käse, Obst, Gemüse, Brot", produkte:["milch","obst","gemuese","brot"],
     tage:["Mi","Sa"], von:"07:00", bis:"13:00", beschreibung:"Traditioneller Wochenmarkt.",
     lat:51.013, lng:7.155, telefon:"", email:"", story:"", wiederholend:false, kalender:[] },
-  { id:4, name:"Imkerei Waldbluete", typ:"direktvermarkter", ort:"Roesrath", adresse:"Waldstrasse 7",
+  { id:4, name:"Imkerei Waldblüte", typ:"direktvermarkter", ort:"Rösrath", adresse:"Waldstraße 7",
     angebot:"Honig, Wachsprodukte, Pollen", produkte:["honig"], tage:["Sa"],
-    von:"10:00", bis:"16:00", beschreibung:"Natuerlicher Honig aus dem Bergischen Land.",
+    von:"10:00", bis:"16:00", beschreibung:"Natürlicher Honig aus dem Bergischen Land.",
     lat:50.905, lng:7.185, telefon:"02205 456789", email:"waldbluete@example.de",
-    story:"Unsere 40 Voelker fliegen durch die Waelder des Bergischen Landes.",
+    story:"Unsere 40 Völker fliegen durch die Wälder des Bergischen Landes.",
     wiederholend:false, kalender:[
       { id:5, typ:"ernte", titel:"Honigschleuder-Tag", datum:"2026-07-12",
-        beschreibung:"Zuschau beim Honig schleudern.", plaetze:10, anmeldungen:4,
+        beschreibung:"Zuschauen beim Honig schleudern.", plaetze:10, anmeldungen:4,
         stornoFristTage:7, stornoGebuehr:10, mindestAnmeldungen:6 }
     ]
   },
@@ -231,14 +231,14 @@ var BEISPIEL = [
     tage:["Mo","Di","Mi","Do","Fr","Sa","So"], von:"00:00", bis:"23:59",
     beschreibung:"24h Milchautomat direkt am Hof.",
     lat:51.026, lng:7.098, telefon:"", email:"", story:"", wiederholend:false, kalender:[] },
-  { id:6, name:"Gaertnerei Rosenduft", typ:"gaertnerei", ort:"Kuerten", adresse:"Blumenweg 5",
-    angebot:"Saisonblumen, Kraeuter, Gemuesepflanzen", produkte:["blumen","gemuese"],
+  { id:6, name:"Gärtnerei Rosenduft", typ:"gaertnerei", ort:"Kürten", adresse:"Blumenweg 5",
+    angebot:"Saisonblumen, Kräuter, Gemüsepflanzen", produkte:["blumen","gemuese"],
     tage:["Di","Mi","Do","Fr","Sa"], von:"09:00", bis:"17:00", beschreibung:"Bunte Vielfalt.",
     lat:51.050, lng:7.248, telefon:"02207 333444", email:"rosenduft@example.de",
     story:"", wiederholend:true, wiederholungsMonate:[4,5,9,10], wiederholungsTitel:"Saisonale Pflanz-Aktionen",
     kalender:[
-      { id:6, typ:"pflück", titel:"Tulpen-Pfluecksaison", datum:"2026-04-20",
-        beschreibung:"Tulpen selbst pfluecken!", plaetze:null, anmeldungen:18,
+      { id:6, typ:"pflück", titel:"Tulpen-Pflücksaison", datum:"2026-04-20",
+        beschreibung:"Tulpen selbst pflücken!", plaetze:null, anmeldungen:18,
         stornoFristTage:2, stornoGebuehr:0, mindestAnmeldungen:null }
     ]
   },
@@ -250,7 +250,7 @@ var BEISPIEL = [
     story:"Unsere Tiere wachsen auf der Weide auf. Wenn wir schlachten, dann mit Respekt.",
     wiederholend:false, kalender:[
       { id:7, typ:"schlacht", titel:"Lamm-Schlachtung", datum:"2026-09-05",
-        beschreibung:"Vorbestellung fuer frisches Lammfleisch.", plaetze:8, anmeldungen:2,
+        beschreibung:"Vorbestellung für frisches Lammfleisch.", plaetze:8, anmeldungen:2,
         stornoFristTage:14, stornoGebuehr:25, mindestAnmeldungen:6 }
     ]
   }
@@ -296,6 +296,124 @@ function teileAnbieter(a) {
   } else if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(function(){alert("Kopiert!");});
   }
+}
+
+/* ─── Safe-Area / Status-Bar Hilfsfunktion ───
+   Färbt die iOS-Statusleiste (dort wo die Uhrzeit steht) passend zur
+   aktuell sichtbaren Ansicht ein, damit dort kein weisser/schwarzer
+   Rand mehr zu sehen ist. */
+function setzeStatusbarFarbe(farbe) {
+  try {
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.name = "theme-color";
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", farbe);
+
+    var viewport = document.querySelector('meta[name="viewport"]');
+    if (!viewport) {
+      viewport = document.createElement("meta");
+      viewport.name = "viewport";
+      document.head.appendChild(viewport);
+    }
+    if (viewport.getAttribute("content").indexOf("viewport-fit=cover") === -1) {
+      viewport.setAttribute("content", "width=device-width, initial-scale=1, viewport-fit=cover");
+    }
+
+    document.documentElement.style.background = farbe;
+    document.body.style.background = farbe;
+    document.body.style.margin = "0";
+  } catch(e) {}
+}
+
+/* ─── Bottom-Sheet mit funktionierendem Swipe-to-close ─── */
+function Sheet(props) {
+  var onClose = props.onClose;
+  var zIndex = props.zIndex || 300;
+  var maxHeight = props.maxHeight || "90vh";
+  var children = props.children;
+
+  var contentRef = useRef(null);
+  var [dragY, setDragY] = useState(0);
+  var [dragging, setDragging] = useState(false);
+  var [closing, setClosing] = useState(false);
+  var touchStartY = useRef(0);
+  var istWischGeste = useRef(false);
+
+  function schliessen() {
+    if (closing) return;
+    setClosing(true);
+    setTimeout(function() { onClose(); }, 220);
+  }
+
+  function onTouchStart(e) {
+    var scrollTop = contentRef.current ? contentRef.current.scrollTop : 0;
+    istWischGeste.current = scrollTop <= 0;
+    touchStartY.current = e.touches[0].clientY;
+    if (istWischGeste.current) setDragging(true);
+  }
+
+  function onTouchMove(e) {
+    if (!istWischGeste.current) return;
+    var delta = e.touches[0].clientY - touchStartY.current;
+    if (delta > 0) {
+      e.preventDefault();
+      setDragY(delta);
+    } else {
+      setDragY(0);
+    }
+  }
+
+  function onTouchEnd() {
+    if (!istWischGeste.current) return;
+    istWischGeste.current = false;
+    setDragging(false);
+    if (dragY > 90) {
+      schliessen();
+    } else {
+      setDragY(0);
+    }
+  }
+
+  var transformWert = closing ? "translateY(100%)" : "translateY(" + dragY + "px)";
+  var overlayDeckkraft = closing ? 0 : Math.max(0, 0.32 - dragY / 350);
+
+  return (
+    <div
+      style={{
+        position:"fixed", inset:0, zIndex:zIndex,
+        display:"flex", flexDirection:"column", justifyContent:"flex-end",
+        background:"rgba(0,0,0,"+overlayDeckkraft+")",
+        transition: dragging ? "none" : "background 0.22s ease"
+      }}
+      onClick={schliessen}
+    >
+      <div
+        ref={contentRef}
+        onClick={function(e){ e.stopPropagation(); }}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        style={{
+          background:"white", borderRadius:"20px 20px 0 0",
+          boxShadow:"0 -4px 30px rgba(0,0,0,.18)",
+          maxHeight:maxHeight, overflowY:"auto",
+          transform:transformWert,
+          transition: dragging ? "none" : "transform 0.22s cubic-bezier(0.32,0.72,0,1)",
+          paddingBottom:"env(safe-area-inset-bottom)",
+          touchAction:"pan-y",
+          WebkitOverflowScrolling:"touch"
+        }}
+      >
+        <div style={{padding:"12px 0 4px",display:"flex",justifyContent:"center"}}>
+          <div style={{width:40,height:4,borderRadius:2,background:"#ddd"}}/>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
 }
 
 /* ─── Leaflet Karte ─── */
@@ -417,7 +535,7 @@ function Karte(props) {
     <div style={{height:380,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"#c62828",gap:8,padding:20,textAlign:"center"}}>
       <div style={{fontSize:32}}>{"🗺️"}</div>
       <div style={{fontWeight:600}}>{"Karte konnte nicht geladen werden."}</div>
-      <div style={{fontSize:13,color:"#888"}}>{"Bitte Internetverbindung pruefen."}</div>
+      <div style={{fontSize:13,color:"#888"}}>{"Bitte Internetverbindung prüfen."}</div>
     </div>
   );
 
@@ -491,43 +609,40 @@ function BewertungsSheet(props) {
   var avg=liste.length?Math.round(liste.reduce(function(s,b){return s+b.sterne;},0)/liste.length*10)/10:0;
 
   return (
-    <div style={{position:"fixed",inset:0,zIndex:400,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={onClose}>
-      <div style={{background:"white",borderRadius:"20px 20px 0 0",boxShadow:"0 -4px 30px rgba(0,0,0,.18)",maxHeight:"85vh",overflowY:"auto"}} onClick={function(e){e.stopPropagation();}}>
-        <div style={{padding:"12px 0 4px",display:"flex",justifyContent:"center"}}><div style={{width:40,height:4,borderRadius:2,background:"#ddd"}}/></div>
-        <div style={{padding:"0 20px 40px"}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-            <div style={{fontSize:18,fontWeight:700}}>{"Bewertungen"}</div>
-            {avg>0&&<div style={{display:"flex",alignItems:"center",gap:6}}><Sterne wert={Math.round(avg)} readonly={true}/><span style={{fontSize:14,fontWeight:700,color:"#f4a020"}}>{avg}</span><span style={{fontSize:12,color:"#999"}}>{"("+liste.length+")"}</span></div>}
-          </div>
-          {status!=="ok"&&(
-            <div style={{background:"#f8f8f5",borderRadius:14,padding:16,marginBottom:16}}>
-              <div style={{fontSize:14,fontWeight:600,marginBottom:10}}>{"Deine Bewertung"}</div>
-              <Sterne wert={sterne} onChange={setSterne} gross={true}/>
-              <textarea placeholder="Erfahrungsbericht (optional)..." value={text} onChange={function(e){setText(e.target.value);}} rows={3} style={{width:"100%",marginTop:12,padding:12,borderRadius:12,border:"1px solid #e0ddd4",fontSize:14,outline:"none",resize:"none",boxSizing:"border-box"}}/>
-              {status==="error"&&<div style={{fontSize:12,color:"#c62828",marginTop:6}}>{"Fehler."}</div>}
-              <button onClick={submit} disabled={!sterne||status==="sending"} style={{width:"100%",marginTop:10,padding:13,borderRadius:12,border:"none",background:sterne?"#2d6a4f":"#ccc",color:"white",fontWeight:700,fontSize:15,cursor:"pointer"}}>
-                {status==="sending"?"Wird gesendet...":"Bewertung abschicken"}
-              </button>
-            </div>
-          )}
-          {status==="ok"&&<div style={{background:"#e8f5e9",borderRadius:12,padding:14,marginBottom:16,textAlign:"center",color:"#2d6a4f",fontWeight:600}}>{"Danke fuer deine Bewertung!"}</div>}
-          {laden?<div style={{textAlign:"center",padding:20,color:"#999"}}>{"Laedt..."}</div>
-            :liste.length===0?<div style={{textAlign:"center",padding:20,color:"#999",fontSize:13}}>{"Noch keine Bewertungen."}</div>
-            :liste.map(function(b,i){
-              return(
-                <div key={i} style={{background:"#f8f8f5",borderRadius:12,padding:"12px 14px",marginBottom:10}}>
-                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-                    <Sterne wert={b.sterne} readonly={true}/>
-                    <span style={{fontSize:11,color:"#bbb"}}>{new Date(b.erstellt_am).toLocaleDateString("de-DE")}</span>
-                  </div>
-                  {b.text&&<div style={{fontSize:13,color:"#444",lineHeight:1.5}}>{b.text}</div>}
-                </div>
-              );
-            })
-          }
+    <Sheet onClose={onClose} zIndex={400}>
+      <div style={{padding:"0 20px 40px"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+          <div style={{fontSize:18,fontWeight:700}}>{"Bewertungen"}</div>
+          {avg>0&&<div style={{display:"flex",alignItems:"center",gap:6}}><Sterne wert={Math.round(avg)} readonly={true}/><span style={{fontSize:14,fontWeight:700,color:"#f4a020"}}>{avg}</span><span style={{fontSize:12,color:"#999"}}>{"("+liste.length+")"}</span></div>}
         </div>
+        {status!=="ok"&&(
+          <div style={{background:"#f8f8f5",borderRadius:14,padding:16,marginBottom:16}}>
+            <div style={{fontSize:14,fontWeight:600,marginBottom:10}}>{"Deine Bewertung"}</div>
+            <Sterne wert={sterne} onChange={setSterne} gross={true}/>
+            <textarea placeholder="Erfahrungsbericht (optional)..." value={text} onChange={function(e){setText(e.target.value);}} rows={3} style={{width:"100%",marginTop:12,padding:12,borderRadius:12,border:"1px solid #e0ddd4",fontSize:14,outline:"none",resize:"none",boxSizing:"border-box"}}/>
+            {status==="error"&&<div style={{fontSize:12,color:"#c62828",marginTop:6}}>{"Fehler."}</div>}
+            <button onClick={submit} disabled={!sterne||status==="sending"} style={{width:"100%",marginTop:10,padding:13,borderRadius:12,border:"none",background:sterne?"#2d6a4f":"#ccc",color:"white",fontWeight:700,fontSize:15,cursor:"pointer"}}>
+              {status==="sending"?"Wird gesendet...":"Bewertung abschicken"}
+            </button>
+          </div>
+        )}
+        {status==="ok"&&<div style={{background:"#e8f5e9",borderRadius:12,padding:14,marginBottom:16,textAlign:"center",color:"#2d6a4f",fontWeight:600}}>{"Danke für deine Bewertung!"}</div>}
+        {laden?<div style={{textAlign:"center",padding:20,color:"#999"}}>{"Lädt..."}</div>
+          :liste.length===0?<div style={{textAlign:"center",padding:20,color:"#999",fontSize:13}}>{"Noch keine Bewertungen."}</div>
+          :liste.map(function(b,i){
+            return(
+              <div key={i} style={{background:"#f8f8f5",borderRadius:12,padding:"12px 14px",marginBottom:10}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                  <Sterne wert={b.sterne} readonly={true}/>
+                  <span style={{fontSize:11,color:"#bbb"}}>{new Date(b.erstellt_am).toLocaleDateString("de-DE")}</span>
+                </div>
+                {b.text&&<div style={{fontSize:13,color:"#444",lineHeight:1.5}}>{b.text}</div>}
+              </div>
+            );
+          })
+        }
       </div>
-    </div>
+    </Sheet>
   );
 }
 
@@ -538,31 +653,28 @@ function SaisonSheet(props) {
   var [sel,setSel]=useState(monat);
   var saison=SAISON.find(function(s){return s.m===sel;})||{p:[]};
   return (
-    <div style={{position:"fixed",inset:0,zIndex:400,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={onClose}>
-      <div style={{background:"white",borderRadius:"20px 20px 0 0",boxShadow:"0 -4px 30px rgba(0,0,0,.18)",maxHeight:"85vh",overflowY:"auto"}} onClick={function(e){e.stopPropagation();}}>
-        <div style={{padding:"12px 0 4px",display:"flex",justifyContent:"center"}}><div style={{width:40,height:4,borderRadius:2,background:"#ddd"}}/></div>
-        <div style={{padding:"0 20px 36px"}}>
-          <div style={{fontSize:18,fontWeight:700,marginBottom:4}}>{"Saisonkalender"}</div>
-          <div style={{fontSize:13,color:"#888",marginBottom:16}}>{"Was hat gerade Saison?"}</div>
-          <div style={{overflowX:"auto",display:"flex",gap:8,marginBottom:20,paddingBottom:4}}>
-            {MONATE.map(function(name,i){
-              return(
-                <button key={i} onClick={function(){setSel(i+1);}} style={{flexShrink:0,padding:"8px 14px",borderRadius:20,border:"none",cursor:"pointer",fontSize:13,fontWeight:600,background:sel===i+1?"#2d6a4f":"#f0efe8",color:sel===i+1?"white":"#555"}}>
-                  {name.slice(0,3)}
-                </button>
-              );
-            })}
-          </div>
-          <div style={{fontSize:16,fontWeight:700,color:"#2d6a4f",marginBottom:14}}>{MONATE[sel-1]}</div>
-          <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
-            {saison.p.map(function(p,i){
-              return <div key={i} style={{background:"#f0f7f0",borderRadius:12,padding:"10px 16px",fontSize:14,color:"#2d4a1e",fontWeight:500}}>{"🌿 "+p}</div>;
-            })}
-          </div>
-          {sel===monat&&<div style={{marginTop:16,background:"#e8f5e9",borderRadius:12,padding:"10px 14px",fontSize:12,color:"#2d6a4f"}}>{"Aktueller Monat - jetzt frisch erhaeltlich!"}</div>}
+    <Sheet onClose={onClose} zIndex={400}>
+      <div style={{padding:"0 20px 36px"}}>
+        <div style={{fontSize:18,fontWeight:700,marginBottom:4}}>{"Saisonkalender"}</div>
+        <div style={{fontSize:13,color:"#888",marginBottom:16}}>{"Was hat gerade Saison?"}</div>
+        <div style={{overflowX:"auto",display:"flex",gap:8,marginBottom:20,paddingBottom:4}}>
+          {MONATE.map(function(name,i){
+            return(
+              <button key={i} onClick={function(){setSel(i+1);}} style={{flexShrink:0,padding:"8px 14px",borderRadius:20,border:"none",cursor:"pointer",fontSize:13,fontWeight:600,background:sel===i+1?"#2d6a4f":"#f0efe8",color:sel===i+1?"white":"#555"}}>
+                {name.slice(0,3)}
+              </button>
+            );
+          })}
         </div>
+        <div style={{fontSize:16,fontWeight:700,color:"#2d6a4f",marginBottom:14}}>{MONATE[sel-1]}</div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
+          {saison.p.map(function(p,i){
+            return <div key={i} style={{background:"#f0f7f0",borderRadius:12,padding:"10px 16px",fontSize:14,color:"#2d4a1e",fontWeight:500}}>{"🌿 "+p}</div>;
+          })}
+        </div>
+        {sel===monat&&<div style={{marginTop:16,background:"#e8f5e9",borderRadius:12,padding:"10px 14px",fontSize:12,color:"#2d6a4f"}}>{"Aktueller Monat – jetzt frisch erhältlich!"}</div>}
       </div>
-    </div>
+    </Sheet>
   );
 }
 
@@ -576,7 +688,7 @@ function StornoInfo(props) {
   return (
     <div style={{background:kostenlos?"#e8f5e9":"#fff3e0",borderRadius:10,padding:"10px 14px",marginBottom:14}}>
       <div style={{fontSize:12,fontWeight:700,color:kostenlos?"#2d6a4f":"#e65100",marginBottom:4}}>
-        {kostenlos?"Kostenlose Stornierung moeglich":"Stornierungsfrist abgelaufen"}
+        {kostenlos?"Kostenlose Stornierung möglich":"Stornierungsfrist abgelaufen"}
       </div>
       <div style={{fontSize:12,color:"#555",lineHeight:1.5}}>
         {"Kostenlos bis "+frist+" Tage vorher (noch "+tageBis+" Tage)."+(gebuehr>0?" Danach: "+gebuehr+" EUR.":"")}
@@ -631,63 +743,60 @@ function AnmeldeSheet(props) {
   function submitStorno(){if(!stornoEmail)return;setStornoStatus("sending");sendeStornierung(ereignis.id,stornoEmail).then(function(){setStornoStatus("ok");}).catch(function(){setStornoStatus("error");});}
   var iS={width:"100%",padding:"12px 14px",borderRadius:12,border:"1px solid #e0ddd4",fontSize:15,outline:"none",background:"#faf9f5",boxSizing:"border-box"};
   return (
-    <div style={{position:"fixed",inset:0,zIndex:500,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={onClose}>
-      <div style={{background:"white",borderRadius:"20px 20px 0 0",boxShadow:"0 -4px 30px rgba(0,0,0,.2)",maxHeight:"92vh",overflowY:"auto"}} onClick={function(e){e.stopPropagation();}}>
-        <div style={{padding:"12px 0 4px",display:"flex",justifyContent:"center"}}><div style={{width:40,height:4,borderRadius:2,background:"#ddd"}}/></div>
-        <div style={{padding:"0 20px 40px"}}>
-          <div style={{display:"flex",gap:0,background:"#f0efe8",borderRadius:12,padding:4,marginBottom:18}}>
-            <button onClick={function(){setShowStorno(false);}} style={{flex:1,padding:"10px 0",borderRadius:10,border:"none",cursor:"pointer",fontWeight:700,fontSize:14,background:!showStorno?"white":"transparent",color:!showStorno?"#1a1a1a":"#888",boxShadow:!showStorno?"0 1px 4px rgba(0,0,0,.1)":"none"}}>{"Anmelden"}</button>
-            <button onClick={function(){setShowStorno(true);}} style={{flex:1,padding:"10px 0",borderRadius:10,border:"none",cursor:"pointer",fontWeight:700,fontSize:14,background:showStorno?"white":"transparent",color:showStorno?"#1a1a1a":"#888",boxShadow:showStorno?"0 1px 4px rgba(0,0,0,.1)":"none"}}>{"Abmelden"}</button>
-          </div>
-          <div style={{fontSize:18,fontWeight:700,marginBottom:4}}>{(typIcons[ereignis.typ]||"📅")+" "+ereignis.titel}</div>
-          <div style={{fontSize:13,color:"#666",marginBottom:4}}>{"📅 "+datum}</div>
-          <div style={{fontSize:13,color:"#555",marginBottom:14}}>{"📍 "+anbieter.name+", "+anbieter.ort}</div>
-          <StornoInfo ereignis={ereignis}/>
-          {ereignis.mindestAnmeldungen&&<div style={{background:"#f3e8ff",borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:12,color:"#6a0dad"}}>{"Mindestteilnahme: "+ereignis.mindestAnmeldungen+" Personen."}</div>}
-          {ereignis.typ==="schlacht"&&!showStorno&&status!=="ok"&&(
-            <div style={{background:"linear-gradient(135deg,#3d2b1f,#5a3e2b)",borderRadius:14,padding:16,marginBottom:16,color:"white"}}>
-              <div style={{fontSize:15,fontWeight:700,marginBottom:8}}>{"Ein Wort bevor du dich anmeldest"}</div>
-              <div style={{fontSize:13,lineHeight:1.7,opacity:.92}}>{"Hinter diesem Termin steht ein echtes Tier, das eigens fuer diese Bestellung sein Leben gibt."}</div>
-              <div style={{fontSize:13,lineHeight:1.7,marginTop:8,opacity:.92}}>{"Bitte melde dich nur an, wenn du sicher weisst, dass du erscheinst und das Fleisch abnimmst."}</div>
-              <div style={{marginTop:12,padding:"10px 12px",background:"rgba(255,255,255,0.1)",borderRadius:10,fontSize:12,color:"#f5d08a",lineHeight:1.5}}>{"Direktvermarktung funktioniert nur wenn wir als Konsumenten zu unserem Wort stehen."}</div>
-            </div>
-          )}
-          {!showStorno&&(status==="ok"
-            ?<div style={{textAlign:"center",padding:"20px 0"}}><div style={{fontSize:44}}>{"✅"}</div><div style={{fontSize:17,fontWeight:700,marginTop:10,color:"#2d6a4f"}}>{"Anmeldung gesendet!"}</div><button onClick={onClose} style={{marginTop:16,padding:"12px 32px",borderRadius:24,border:"none",background:"#2d6a4f",color:"white",fontWeight:700,fontSize:15,cursor:"pointer"}}>{"Schliessen"}</button></div>
-            :<div style={{display:"flex",flexDirection:"column",gap:12}}>
-              {ereignis.plaetze&&<div style={{background:"#fff8e8",borderRadius:10,padding:"8px 12px",fontSize:13,color:"#e65100"}}>{"Noch "+(ereignis.plaetze-ereignis.anmeldungen)+" von "+ereignis.plaetze+" Plaetzen frei"}</div>}
-              <input placeholder="Dein Name *" value={form.name} onChange={function(e){setForm(function(f){return Object.assign({},f,{name:e.target.value});});}} style={iS}/>
-              <input placeholder="E-Mail *" type="email" value={form.email} onChange={function(e){setForm(function(f){return Object.assign({},f,{email:e.target.value});});}} style={iS}/>
-              <input placeholder="Telefon (optional)" type="tel" value={form.telefon} onChange={function(e){setForm(function(f){return Object.assign({},f,{telefon:e.target.value});});}} style={iS}/>
-              <div>
-                <div style={{fontSize:12,color:"#999",marginBottom:6,fontWeight:600}}>{"PERSONEN"}</div>
-                <div style={{display:"flex",gap:8}}>
-                  {["1","2","3","4","5+"].map(function(n){return <button key={n} onClick={function(){setForm(function(f){return Object.assign({},f,{personen:n});});}} style={{flex:1,padding:"12px 0",borderRadius:10,border:"none",cursor:"pointer",fontWeight:700,fontSize:15,background:form.personen===n?"#2d6a4f":"#f0efe8",color:form.personen===n?"white":"#555"}}>{n}</button>;})}
-                </div>
-              </div>
-              <textarea placeholder="Nachricht (optional)" value={form.nachricht} onChange={function(e){setForm(function(f){return Object.assign({},f,{nachricht:e.target.value});});}} rows={2} style={Object.assign({},iS,{resize:"none"})}/>
-              {status==="error"&&<div style={{background:"#fdecea",borderRadius:10,padding:"10px 12px",fontSize:13,color:"#c62828"}}>{"Senden fehlgeschlagen."}</div>}
-              <button onClick={submit} disabled={!form.name||!form.email||status==="sending"} style={{padding:16,borderRadius:14,border:"none",background:(!form.name||!form.email)?"#ccc":"#2d6a4f",color:"white",fontWeight:700,fontSize:16,cursor:"pointer"}}>
-                {status==="sending"?"Wird gesendet...":"Verbindlich anmelden"}
-              </button>
-            </div>
-          )}
-          {showStorno&&(stornoStatus==="ok"
-            ?<div style={{textAlign:"center",padding:"20px 0"}}><div style={{fontSize:44}}>{stornoKostenlos?"✅":"💸"}</div><div style={{fontSize:17,fontWeight:700,marginTop:10,color:stornoKostenlos?"#2d6a4f":"#e65100"}}>{stornoKostenlos?"Stornierung erfolgreich":"Gebuehren fallen an"}</div><button onClick={onClose} style={{marginTop:16,padding:"12px 32px",borderRadius:24,border:"none",background:"#2d6a4f",color:"white",fontWeight:700,fontSize:15,cursor:"pointer"}}>{"Schliessen"}</button></div>
-            :<div style={{display:"flex",flexDirection:"column",gap:12}}>
-              <div style={{background:stornoKostenlos?"#e8f5e9":"#fce4ec",borderRadius:12,padding:14,fontSize:13,lineHeight:1.6}}>
-                {stornoKostenlos?<span style={{color:"#2d6a4f"}}>{"Fristgerecht - kostenlos."}</span>:<span style={{color:"#c62828"}}>{"Nach Frist - "+gebuehr+" EUR Gebuehr faellig."}</span>}
-              </div>
-              <input placeholder="Deine E-Mail *" type="email" value={stornoEmail} onChange={function(e){setStornoEmail(e.target.value);}} style={iS}/>
-              {stornoStatus==="error"&&<div style={{background:"#fdecea",borderRadius:10,padding:"10px 12px",fontSize:13,color:"#c62828"}}>{"Fehler. Anmeldung nicht gefunden."}</div>}
-              <button onClick={submitStorno} disabled={!stornoEmail||stornoStatus==="sending"} style={{padding:16,borderRadius:14,border:"none",cursor:"pointer",fontWeight:700,fontSize:15,background:!stornoEmail?"#ccc":stornoKostenlos?"#2d6a4f":"#e63946",color:"white"}}>
-                {stornoStatus==="sending"?"Sendet...":stornoKostenlos?"Kostenlos abmelden":"Kostenpflichtig abmelden ("+gebuehr+" EUR)"}
-              </button>
-            </div>
-          )}
+    <Sheet onClose={onClose} zIndex={500} maxHeight="92vh">
+      <div style={{padding:"0 20px 40px"}}>
+        <div style={{display:"flex",gap:0,background:"#f0efe8",borderRadius:12,padding:4,marginBottom:18}}>
+          <button onClick={function(){setShowStorno(false);}} style={{flex:1,padding:"10px 0",borderRadius:10,border:"none",cursor:"pointer",fontWeight:700,fontSize:14,background:!showStorno?"white":"transparent",color:!showStorno?"#1a1a1a":"#888",boxShadow:!showStorno?"0 1px 4px rgba(0,0,0,.1)":"none"}}>{"Anmelden"}</button>
+          <button onClick={function(){setShowStorno(true);}} style={{flex:1,padding:"10px 0",borderRadius:10,border:"none",cursor:"pointer",fontWeight:700,fontSize:14,background:showStorno?"white":"transparent",color:showStorno?"#1a1a1a":"#888",boxShadow:showStorno?"0 1px 4px rgba(0,0,0,.1)":"none"}}>{"Abmelden"}</button>
         </div>
+        <div style={{fontSize:18,fontWeight:700,marginBottom:4}}>{(typIcons[ereignis.typ]||"📅")+" "+ereignis.titel}</div>
+        <div style={{fontSize:13,color:"#666",marginBottom:4}}>{"📅 "+datum}</div>
+        <div style={{fontSize:13,color:"#555",marginBottom:14}}>{"📍 "+anbieter.name+", "+anbieter.ort}</div>
+        <StornoInfo ereignis={ereignis}/>
+        {ereignis.mindestAnmeldungen&&<div style={{background:"#f3e8ff",borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:12,color:"#6a0dad"}}>{"Mindestteilnahme: "+ereignis.mindestAnmeldungen+" Personen."}</div>}
+        {ereignis.typ==="schlacht"&&!showStorno&&status!=="ok"&&(
+          <div style={{background:"linear-gradient(135deg,#3d2b1f,#5a3e2b)",borderRadius:14,padding:16,marginBottom:16,color:"white"}}>
+            <div style={{fontSize:15,fontWeight:700,marginBottom:8}}>{"Ein Wort bevor du dich anmeldest"}</div>
+            <div style={{fontSize:13,lineHeight:1.7,opacity:.92}}>{"Hinter diesem Termin steht ein echtes Tier, das eigens für diese Bestellung sein Leben gibt."}</div>
+            <div style={{fontSize:13,lineHeight:1.7,marginTop:8,opacity:.92}}>{"Bitte melde dich nur an, wenn du sicher weißt, dass du erscheinst und das Fleisch abnimmst."}</div>
+            <div style={{marginTop:12,padding:"10px 12px",background:"rgba(255,255,255,0.1)",borderRadius:10,fontSize:12,color:"#f5d08a",lineHeight:1.5}}>{"Direktvermarktung funktioniert nur wenn wir als Konsumenten zu unserem Wort stehen."}</div>
+          </div>
+        )}
+        {!showStorno&&(status==="ok"
+          ?<div style={{textAlign:"center",padding:"20px 0"}}><div style={{fontSize:44}}>{"✅"}</div><div style={{fontSize:17,fontWeight:700,marginTop:10,color:"#2d6a4f"}}>{"Anmeldung gesendet!"}</div><button onClick={onClose} style={{marginTop:16,padding:"12px 32px",borderRadius:24,border:"none",background:"#2d6a4f",color:"white",fontWeight:700,fontSize:15,cursor:"pointer"}}>{"Schließen"}</button></div>
+          :<div style={{display:"flex",flexDirection:"column",gap:12}}>
+            {ereignis.plaetze&&<div style={{background:"#fff8e8",borderRadius:10,padding:"8px 12px",fontSize:13,color:"#e65100"}}>{"Noch "+(ereignis.plaetze-ereignis.anmeldungen)+" von "+ereignis.plaetze+" Plätzen frei"}</div>}
+            <input placeholder="Dein Name *" value={form.name} onChange={function(e){setForm(function(f){return Object.assign({},f,{name:e.target.value});});}} style={iS}/>
+            <input placeholder="E-Mail *" type="email" value={form.email} onChange={function(e){setForm(function(f){return Object.assign({},f,{email:e.target.value});});}} style={iS}/>
+            <input placeholder="Telefon (optional)" type="tel" value={form.telefon} onChange={function(e){setForm(function(f){return Object.assign({},f,{telefon:e.target.value});});}} style={iS}/>
+            <div>
+              <div style={{fontSize:12,color:"#999",marginBottom:6,fontWeight:600}}>{"PERSONEN"}</div>
+              <div style={{display:"flex",gap:8}}>
+                {["1","2","3","4","5+"].map(function(n){return <button key={n} onClick={function(){setForm(function(f){return Object.assign({},f,{personen:n});});}} style={{flex:1,padding:"12px 0",borderRadius:10,border:"none",cursor:"pointer",fontWeight:700,fontSize:15,background:form.personen===n?"#2d6a4f":"#f0efe8",color:form.personen===n?"white":"#555"}}>{n}</button>;})}
+              </div>
+            </div>
+            <textarea placeholder="Nachricht (optional)" value={form.nachricht} onChange={function(e){setForm(function(f){return Object.assign({},f,{nachricht:e.target.value});});}} rows={2} style={Object.assign({},iS,{resize:"none"})}/>
+            {status==="error"&&<div style={{background:"#fdecea",borderRadius:10,padding:"10px 12px",fontSize:13,color:"#c62828"}}>{"Senden fehlgeschlagen."}</div>}
+            <button onClick={submit} disabled={!form.name||!form.email||status==="sending"} style={{padding:16,borderRadius:14,border:"none",background:(!form.name||!form.email)?"#ccc":"#2d6a4f",color:"white",fontWeight:700,fontSize:16,cursor:"pointer"}}>
+              {status==="sending"?"Wird gesendet...":"Verbindlich anmelden"}
+            </button>
+          </div>
+        )}
+        {showStorno&&(stornoStatus==="ok"
+          ?<div style={{textAlign:"center",padding:"20px 0"}}><div style={{fontSize:44}}>{stornoKostenlos?"✅":"💸"}</div><div style={{fontSize:17,fontWeight:700,marginTop:10,color:stornoKostenlos?"#2d6a4f":"#e65100"}}>{stornoKostenlos?"Stornierung erfolgreich":"Gebühren fallen an"}</div><button onClick={onClose} style={{marginTop:16,padding:"12px 32px",borderRadius:24,border:"none",background:"#2d6a4f",color:"white",fontWeight:700,fontSize:15,cursor:"pointer"}}>{"Schließen"}</button></div>
+          :<div style={{display:"flex",flexDirection:"column",gap:12}}>
+            <div style={{background:stornoKostenlos?"#e8f5e9":"#fce4ec",borderRadius:12,padding:14,fontSize:13,lineHeight:1.6}}>
+              {stornoKostenlos?<span style={{color:"#2d6a4f"}}>{"Fristgerecht - kostenlos."}</span>:<span style={{color:"#c62828"}}>{"Nach Frist – "+gebuehr+" EUR Gebühr fällig."}</span>}
+            </div>
+            <input placeholder="Deine E-Mail *" type="email" value={stornoEmail} onChange={function(e){setStornoEmail(e.target.value);}} style={iS}/>
+            {stornoStatus==="error"&&<div style={{background:"#fdecea",borderRadius:10,padding:"10px 12px",fontSize:13,color:"#c62828"}}>{"Fehler. Anmeldung nicht gefunden."}</div>}
+            <button onClick={submitStorno} disabled={!stornoEmail||stornoStatus==="sending"} style={{padding:16,borderRadius:14,border:"none",cursor:"pointer",fontWeight:700,fontSize:15,background:!stornoEmail?"#ccc":stornoKostenlos?"#2d6a4f":"#e63946",color:"white"}}>
+              {stornoStatus==="sending"?"Sendet...":stornoKostenlos?"Kostenlos abmelden":"Kostenpflichtig abmelden ("+gebuehr+" EUR)"}
+            </button>
+          </div>
+        )}
       </div>
-    </div>
+    </Sheet>
   );
 }
 
@@ -705,7 +814,7 @@ function AnbieterSheet(props) {
   var monat=new Date().getMonth()+1;
   var kalCount=a.kalender?a.kalender.length:0;
   var typIcons={ernte:"🌾","pflück":"🌿",schlacht:"🥩"};
-  var typLabels={ernte:"Ernte","pflück":"Pfluecken",schlacht:"Schlachtung"};
+  var typLabels={ernte:"Ernte","pflück":"Pflücken",schlacht:"Schlachtung"};
 
   function openMaps() {
     var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -717,135 +826,132 @@ function AnbieterSheet(props) {
   if(a.story) tabs.splice(1,0,{id:"story",label:"Story"});
 
   return (
-    <div style={{position:"fixed",inset:0,zIndex:300,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={onClose}>
-      <div style={{background:"white",borderRadius:"20px 20px 0 0",boxShadow:"0 -4px 30px rgba(0,0,0,.18)",maxHeight:"90vh",overflowY:"auto"}} onClick={function(e){e.stopPropagation();}}>
-        <div style={{padding:"12px 0 4px",display:"flex",justifyContent:"center"}}><div style={{width:40,height:4,borderRadius:2,background:"#ddd"}}/></div>
-        <div style={{padding:"0 20px 36px"}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14}}>
-            <div style={{flex:1,marginRight:8}}>
-              <div style={{fontSize:20,fontWeight:700,lineHeight:1.2}}>{a.name}</div>
-              <span style={{background:farbe+"22",color:farbe,padding:"3px 10px",borderRadius:20,fontSize:12,display:"inline-block",marginTop:6}}>{(typ?typ.icon:"")+" "+(typ?typ.label:"")}</span>
-            </div>
-            <div style={{display:"flex",gap:8,alignItems:"center"}}>
-              <button onClick={function(){toggleFavorit(a.id);}} style={{background:"none",border:"none",fontSize:24,cursor:"pointer",padding:4}}>{istFavorit?"❤️":"🤍"}</button>
-              <button onClick={function(){teileAnbieter(a);}} style={{background:"#f0f7f0",border:"none",borderRadius:20,padding:"6px 12px",color:"#2d6a4f",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Teilen"}</button>
-              <button onClick={onClose} style={{background:"#f0f0f0",border:"none",borderRadius:"50%",width:34,height:34,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}}>{"X"}</button>
-            </div>
+    <Sheet onClose={onClose} zIndex={300}>
+      <div style={{padding:"0 20px 36px"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14}}>
+          <div style={{flex:1,marginRight:8}}>
+            <div style={{fontSize:20,fontWeight:700,lineHeight:1.2}}>{a.name}</div>
+            <span style={{background:farbe+"22",color:farbe,padding:"3px 10px",borderRadius:20,fontSize:12,display:"inline-block",marginTop:6}}>{(typ?typ.icon:"")+" "+(typ?typ.label:"")}</span>
           </div>
-          <div style={{display:"flex",borderBottom:"2px solid #f0efe8",marginBottom:16,overflowX:"auto"}}>
-            {tabs.map(function(t){
-              return(
-                <button key={t.id} onClick={function(){setTab(t.id);}} style={{flexShrink:0,padding:"10px 14px",border:"none",cursor:"pointer",fontSize:13,fontWeight:600,background:"transparent",color:tab===t.id?farbe:"#aaa",borderBottom:"2px solid "+(tab===t.id?farbe:"transparent"),marginBottom:-2}}>
-                  {t.label}
-                </button>
-              );
-            })}
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            <button onClick={function(){toggleFavorit(a.id);}} style={{background:"none",border:"none",fontSize:24,cursor:"pointer",padding:4}}>{istFavorit?"❤️":"🤍"}</button>
+            <button onClick={function(){teileAnbieter(a);}} style={{background:"#f0f7f0",border:"none",borderRadius:20,padding:"6px 12px",color:"#2d6a4f",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Teilen"}</button>
+            <button onClick={onClose} style={{background:"#f0f0f0",border:"none",borderRadius:"50%",width:34,height:34,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}}>{"X"}</button>
           </div>
-          {tab==="info"&&(
-            <div>
-              <div style={{background:a.tage.indexOf(heute)>=0?"#e8f5e9":"#fff3e0",borderRadius:10,padding:"10px 14px",marginBottom:14,display:"flex",alignItems:"center",gap:8}}>
-                <span style={{fontSize:18}}>{a.tage.indexOf(heute)>=0?"✅":"⏰"}</span>
-                <div>
-                  <div style={{fontSize:13,fontWeight:600,color:a.tage.indexOf(heute)>=0?"#2d6a4f":"#e65100"}}>{a.tage.indexOf(heute)>=0?"Heute geoffnet":"Heute geschlossen"}</div>
-                  <div style={{fontSize:12,color:"#666"}}>{a.von+" - "+a.bis+" Uhr"}</div>
-                </div>
-              </div>
-              <div style={{fontSize:14,color:"#444",marginBottom:8}}>
-                {"📍 "+a.adresse+", "+a.ort}
-                {dist!==null&&<span style={{color:"#2d6a4f",fontWeight:600,marginLeft:6}}>{dist.toFixed(1)+" km"}</span>}
-              </div>
-              <div style={{display:"flex",gap:5,flexWrap:"wrap",marginBottom:14}}>
-                {TAGE.map(function(t){return <span key={t} style={{padding:"5px 10px",borderRadius:16,fontSize:13,fontWeight:600,background:a.tage.indexOf(t)>=0?farbe:"#f0efe8",color:a.tage.indexOf(t)>=0?"white":"#bbb"}}>{t}</span>;})}
-              </div>
-              <div style={{background:"#f8f8f5",borderRadius:12,padding:"12px 14px",marginBottom:14}}>
-                <div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"ANGEBOT"}</div>
-                <div style={{fontSize:14,color:"#333"}}>{a.angebot}</div>
-              </div>
-              {a.wiederholend&&a.wiederholungsMonate&&a.wiederholungsMonate.indexOf(monat)>=0&&(
-                <div style={{background:"#fff8e8",borderRadius:12,padding:"12px 14px",marginBottom:14,border:"1px solid #f4a020"}}>
-                  <div style={{fontSize:12,fontWeight:700,color:"#e65100",marginBottom:4}}>{"Wiederkehrendes Angebot"}</div>
-                  <div style={{fontSize:13,color:"#555"}}>{(a.wiederholungsTitel||"")+" - jetzt aktuell!"}</div>
-                </div>
-              )}
-              <button onClick={function(){setShowBewertung(true);}} style={{width:"100%",padding:"12px 16px",borderRadius:12,border:"1px solid #e0ddd4",background:"#faf9f5",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
-                <div style={{display:"flex",alignItems:"center",gap:8}}><Sterne wert={3} readonly={true}/><span style={{fontSize:13,color:"#888"}}>{"Bewertungen"}</span></div>
-                <span style={{color:"#2d6a4f",fontWeight:700}}>{">"}</span>
-              </button>
-              <button onClick={openMaps} style={{width:"100%",background:"#2d6a4f",color:"white",border:"none",padding:15,borderRadius:14,fontWeight:700,fontSize:15,cursor:"pointer"}}>{"Zu Fuss navigieren"}</button>
-            </div>
-          )}
-          {tab==="story"&&(
-            <div>
-              {a.story
-                ?<div style={{fontSize:15,color:"#333",lineHeight:1.8,borderLeft:"3px solid "+farbe,paddingLeft:14}}>{a.story}</div>
-                :<div style={{textAlign:"center",padding:"32px 0",color:"#999"}}>{"Noch keine Geschichte."}</div>
-              }
-            </div>
-          )}
-          {tab==="kalender"&&(
-            <div>
-              {kalCount===0
-                ?<div style={{textAlign:"center",padding:"32px 0",color:"#999"}}><div style={{fontSize:32,marginBottom:8}}>{"📅"}</div><div>{"Keine Termine"}</div></div>
-                :<div style={{display:"flex",flexDirection:"column",gap:12}}>
-                  {a.kalender.slice().sort(function(x,y){return x.datum.localeCompare(y.datum);}).map(function(ev){
-                    var ausgebucht=ev.plaetze&&ev.anmeldungen>=ev.plaetze;
-                    var bgCol=ev.typ==="ernte"?"#e8f5e9":ev.typ==="pflück"?"#e3f2fd":"#fce4ec";
-                    var badgeCol=ev.typ==="ernte"?"#2d6a4f":ev.typ==="pflück"?"#457b9d":"#c62828";
-                    var evDatum=new Date(ev.datum).toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long"});
-                    var pct=ev.plaetze?Math.round((ev.anmeldungen/ev.plaetze)*100)+"%":"0%";
-                    return(
-                      <div key={ev.id} style={{border:"1px solid #e8e4da",borderRadius:14,overflow:"hidden"}}>
-                        <div style={{background:bgCol,padding:"10px 14px",display:"flex",alignItems:"center",gap:10}}>
-                          <span style={{fontSize:20}}>{typIcons[ev.typ]||"📅"}</span>
-                          <div style={{flex:1}}>
-                            <div style={{fontSize:14,fontWeight:700}}>{ev.titel}</div>
-                            <div style={{fontSize:12,color:"#666"}}>{"📅 "+evDatum}</div>
-                          </div>
-                          <span style={{fontSize:11,fontWeight:600,padding:"3px 8px",borderRadius:8,background:badgeCol,color:"white"}}>{typLabels[ev.typ]||ev.typ}</span>
-                        </div>
-                        <div style={{padding:"10px 14px"}}>
-                          <div style={{fontSize:13,color:"#555",marginBottom:10}}>{ev.beschreibung}</div>
-                          {ev.plaetze&&(
-                            <div style={{marginBottom:10}}>
-                              <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:"#888",marginBottom:4}}><span>{"Plaetze"}</span><span>{ev.anmeldungen+"/"+ev.plaetze}</span></div>
-                              <div style={{height:6,background:"#f0efe8",borderRadius:3,overflow:"hidden"}}><div style={{height:"100%",width:pct,background:farbe,borderRadius:3}}/></div>
-                            </div>
-                          )}
-                          <button onClick={function(){if(!ausgebucht)setAnmeldeEreignis(ev);}} style={{width:"100%",padding:11,borderRadius:12,border:"none",cursor:ausgebucht?"default":"pointer",fontWeight:700,fontSize:14,background:ausgebucht?"#f0efe8":"#2d6a4f",color:ausgebucht?"#aaa":"white"}}>
-                            {ausgebucht?"Ausgebucht":"Jetzt anmelden"}
-                          </button>
-                          {ev.mindestAnmeldungen&&ev.anmeldungen<ev.mindestAnmeldungen&&<ErzeugerAbsageButton ereignis={ev} anbieter={a}/>}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              }
-            </div>
-          )}
-          {tab==="kontakt"&&(
-            <div style={{display:"flex",flexDirection:"column",gap:12}}>
-              {a.telefon&&(
-                <a href={"tel:"+a.telefon} style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",background:"#f8f8f5",borderRadius:14,textDecoration:"none",color:"#1a1a1a"}}>
-                  <span style={{fontSize:24,width:44,height:44,background:"#e8f5e9",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center"}}>{"📞"}</span>
-                  <div><div style={{fontSize:12,color:"#999",fontWeight:600}}>{"TELEFON"}</div><div style={{fontSize:15,fontWeight:600,color:"#2d6a4f"}}>{a.telefon}</div></div>
-                </a>
-              )}
-              {a.email&&(
-                <a href={"mailto:"+a.email} style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",background:"#f8f8f5",borderRadius:14,textDecoration:"none",color:"#1a1a1a"}}>
-                  <span style={{fontSize:24,width:44,height:44,background:"#e8f5e9",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center"}}>{"✉️"}</span>
-                  <div><div style={{fontSize:12,color:"#999",fontWeight:600}}>{"E-MAIL"}</div><div style={{fontSize:15,fontWeight:600,color:"#2d6a4f"}}>{a.email}</div></div>
-                </a>
-              )}
-              {!a.telefon&&!a.email&&<div style={{textAlign:"center",padding:"32px 0",color:"#999"}}><div style={{fontSize:32,marginBottom:8}}>{"📭"}</div><div>{"Keine Kontaktdaten"}</div></div>}
-              <button onClick={openMaps} style={{width:"100%",background:"#2d6a4f",color:"white",border:"none",padding:15,borderRadius:14,fontWeight:700,fontSize:15,cursor:"pointer",marginTop:4}}>{"Zu Fuss navigieren"}</button>
-            </div>
-          )}
         </div>
+        <div style={{display:"flex",borderBottom:"2px solid #f0efe8",marginBottom:16,overflowX:"auto"}}>
+          {tabs.map(function(t){
+            return(
+              <button key={t.id} onClick={function(){setTab(t.id);}} style={{flexShrink:0,padding:"10px 14px",border:"none",cursor:"pointer",fontSize:13,fontWeight:600,background:"transparent",color:tab===t.id?farbe:"#aaa",borderBottom:"2px solid "+(tab===t.id?farbe:"transparent"),marginBottom:-2}}>
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+        {tab==="info"&&(
+          <div>
+            <div style={{background:a.tage.indexOf(heute)>=0?"#e8f5e9":"#fff3e0",borderRadius:10,padding:"10px 14px",marginBottom:14,display:"flex",alignItems:"center",gap:8}}>
+              <span style={{fontSize:18}}>{a.tage.indexOf(heute)>=0?"✅":"⏰"}</span>
+              <div>
+                <div style={{fontSize:13,fontWeight:600,color:a.tage.indexOf(heute)>=0?"#2d6a4f":"#e65100"}}>{a.tage.indexOf(heute)>=0?"Heute geöffnet":"Heute geschlossen"}</div>
+                <div style={{fontSize:12,color:"#666"}}>{a.von+" - "+a.bis+" Uhr"}</div>
+              </div>
+            </div>
+            <div style={{fontSize:14,color:"#444",marginBottom:8}}>
+              {"📍 "+a.adresse+", "+a.ort}
+              {dist!==null&&<span style={{color:"#2d6a4f",fontWeight:600,marginLeft:6}}>{dist.toFixed(1)+" km"}</span>}
+            </div>
+            <div style={{display:"flex",gap:5,flexWrap:"wrap",marginBottom:14}}>
+              {TAGE.map(function(t){return <span key={t} style={{padding:"5px 10px",borderRadius:16,fontSize:13,fontWeight:600,background:a.tage.indexOf(t)>=0?farbe:"#f0efe8",color:a.tage.indexOf(t)>=0?"white":"#bbb"}}>{t}</span>;})}
+            </div>
+            <div style={{background:"#f8f8f5",borderRadius:12,padding:"12px 14px",marginBottom:14}}>
+              <div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"ANGEBOT"}</div>
+              <div style={{fontSize:14,color:"#333"}}>{a.angebot}</div>
+            </div>
+            {a.wiederholend&&a.wiederholungsMonate&&a.wiederholungsMonate.indexOf(monat)>=0&&(
+              <div style={{background:"#fff8e8",borderRadius:12,padding:"12px 14px",marginBottom:14,border:"1px solid #f4a020"}}>
+                <div style={{fontSize:12,fontWeight:700,color:"#e65100",marginBottom:4}}>{"Wiederkehrendes Angebot"}</div>
+                <div style={{fontSize:13,color:"#555"}}>{(a.wiederholungsTitel||"")+" - jetzt aktuell!"}</div>
+              </div>
+            )}
+            <button onClick={function(){setShowBewertung(true);}} style={{width:"100%",padding:"12px 16px",borderRadius:12,border:"1px solid #e0ddd4",background:"#faf9f5",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+              <div style={{display:"flex",alignItems:"center",gap:8}}><Sterne wert={3} readonly={true}/><span style={{fontSize:13,color:"#888"}}>{"Bewertungen"}</span></div>
+              <span style={{color:"#2d6a4f",fontWeight:700}}>{">"}</span>
+            </button>
+            <button onClick={openMaps} style={{width:"100%",background:"#2d6a4f",color:"white",border:"none",padding:15,borderRadius:14,fontWeight:700,fontSize:15,cursor:"pointer"}}>{"Zu Fuß navigieren"}</button>
+          </div>
+        )}
+        {tab==="story"&&(
+          <div>
+            {a.story
+              ?<div style={{fontSize:15,color:"#333",lineHeight:1.8,borderLeft:"3px solid "+farbe,paddingLeft:14}}>{a.story}</div>
+              :<div style={{textAlign:"center",padding:"32px 0",color:"#999"}}>{"Noch keine Geschichte."}</div>
+            }
+          </div>
+        )}
+        {tab==="kalender"&&(
+          <div>
+            {kalCount===0
+              ?<div style={{textAlign:"center",padding:"32px 0",color:"#999"}}><div style={{fontSize:32,marginBottom:8}}>{"📅"}</div><div>{"Keine Termine"}</div></div>
+              :<div style={{display:"flex",flexDirection:"column",gap:12}}>
+                {a.kalender.slice().sort(function(x,y){return x.datum.localeCompare(y.datum);}).map(function(ev){
+                  var ausgebucht=ev.plaetze&&ev.anmeldungen>=ev.plaetze;
+                  var bgCol=ev.typ==="ernte"?"#e8f5e9":ev.typ==="pflück"?"#e3f2fd":"#fce4ec";
+                  var badgeCol=ev.typ==="ernte"?"#2d6a4f":ev.typ==="pflück"?"#457b9d":"#c62828";
+                  var evDatum=new Date(ev.datum).toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long"});
+                  var pct=ev.plaetze?Math.round((ev.anmeldungen/ev.plaetze)*100)+"%":"0%";
+                  return(
+                    <div key={ev.id} style={{border:"1px solid #e8e4da",borderRadius:14,overflow:"hidden"}}>
+                      <div style={{background:bgCol,padding:"10px 14px",display:"flex",alignItems:"center",gap:10}}>
+                        <span style={{fontSize:20}}>{typIcons[ev.typ]||"📅"}</span>
+                        <div style={{flex:1}}>
+                          <div style={{fontSize:14,fontWeight:700}}>{ev.titel}</div>
+                          <div style={{fontSize:12,color:"#666"}}>{"📅 "+evDatum}</div>
+                        </div>
+                        <span style={{fontSize:11,fontWeight:600,padding:"3px 8px",borderRadius:8,background:badgeCol,color:"white"}}>{typLabels[ev.typ]||ev.typ}</span>
+                      </div>
+                      <div style={{padding:"10px 14px"}}>
+                        <div style={{fontSize:13,color:"#555",marginBottom:10}}>{ev.beschreibung}</div>
+                        {ev.plaetze&&(
+                          <div style={{marginBottom:10}}>
+                            <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:"#888",marginBottom:4}}><span>{"Plätze"}</span><span>{ev.anmeldungen+"/"+ev.plaetze}</span></div>
+                            <div style={{height:6,background:"#f0efe8",borderRadius:3,overflow:"hidden"}}><div style={{height:"100%",width:pct,background:farbe,borderRadius:3}}/></div>
+                          </div>
+                        )}
+                        <button onClick={function(){if(!ausgebucht)setAnmeldeEreignis(ev);}} style={{width:"100%",padding:11,borderRadius:12,border:"none",cursor:ausgebucht?"default":"pointer",fontWeight:700,fontSize:14,background:ausgebucht?"#f0efe8":"#2d6a4f",color:ausgebucht?"#aaa":"white"}}>
+                          {ausgebucht?"Ausgebucht":"Jetzt anmelden"}
+                        </button>
+                        {ev.mindestAnmeldungen&&ev.anmeldungen<ev.mindestAnmeldungen&&<ErzeugerAbsageButton ereignis={ev} anbieter={a}/>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            }
+          </div>
+        )}
+        {tab==="kontakt"&&(
+          <div style={{display:"flex",flexDirection:"column",gap:12}}>
+            {a.telefon&&(
+              <a href={"tel:"+a.telefon} style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",background:"#f8f8f5",borderRadius:14,textDecoration:"none",color:"#1a1a1a"}}>
+                <span style={{fontSize:24,width:44,height:44,background:"#e8f5e9",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center"}}>{"📞"}</span>
+                <div><div style={{fontSize:12,color:"#999",fontWeight:600}}>{"TELEFON"}</div><div style={{fontSize:15,fontWeight:600,color:"#2d6a4f"}}>{a.telefon}</div></div>
+              </a>
+            )}
+            {a.email&&(
+              <a href={"mailto:"+a.email} style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",background:"#f8f8f5",borderRadius:14,textDecoration:"none",color:"#1a1a1a"}}>
+                <span style={{fontSize:24,width:44,height:44,background:"#e8f5e9",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center"}}>{"✉️"}</span>
+                <div><div style={{fontSize:12,color:"#999",fontWeight:600}}>{"E-MAIL"}</div><div style={{fontSize:15,fontWeight:600,color:"#2d6a4f"}}>{a.email}</div></div>
+              </a>
+            )}
+            {!a.telefon&&!a.email&&<div style={{textAlign:"center",padding:"32px 0",color:"#999"}}><div style={{fontSize:32,marginBottom:8}}>{"📭"}</div><div>{"Keine Kontaktdaten"}</div></div>}
+            <button onClick={openMaps} style={{width:"100%",background:"#2d6a4f",color:"white",border:"none",padding:15,borderRadius:14,fontWeight:700,fontSize:15,cursor:"pointer",marginTop:4}}>{"Zu Fuß navigieren"}</button>
+          </div>
+        )}
       </div>
       {anmeldeEreignis&&<AnmeldeSheet ereignis={anmeldeEreignis} anbieter={a} onClose={function(){setAnmeldeEreignis(null);}}/>}
       {showBewertung&&<BewertungsSheet anbieter={a} onClose={function(){setShowBewertung(false);}}/>}
-    </div>
+    </Sheet>
   );
 }
 
@@ -858,49 +964,46 @@ function FilterSheet(props) {
   function applyOrt(){if(!localOrt.trim()){setZentrum(null);setSucheStatus(null);onClose();return;}setSucheStatus("searching");setTimeout(function(){var r=sucheOrt(localOrt,anbieter);if(r){setZentrum({lat:r.lat,lng:r.lng,label:r.name});setSucheStatus("ok");setTimeout(onClose,300);}else setSucheStatus("notfound");},350);}
   function useGPS(){setSucheStatus("gps");if(navigator.geolocation){navigator.geolocation.getCurrentPosition(function(p){setZentrum({lat:p.coords.latitude,lng:p.coords.longitude,label:"Mein Standort"});setSucheStatus("ok");setTimeout(onClose,400);},function(){setSucheStatus("gpserror");});}}
   return (
-    <div style={{position:"fixed",inset:0,zIndex:300,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={onClose}>
-      <div style={{background:"white",borderRadius:"20px 20px 0 0",boxShadow:"0 -4px 30px rgba(0,0,0,.18)",maxHeight:"90vh",overflowY:"auto"}} onClick={function(e){e.stopPropagation();}}>
-        <div style={{padding:"12px 0 4px",display:"flex",justifyContent:"center"}}><div style={{width:40,height:4,borderRadius:2,background:"#ddd"}}/></div>
-        <div style={{padding:"0 20px 40px"}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
-            <div style={{fontSize:18,fontWeight:700}}>{"Suche & Filter"}</div>
-            <button onClick={function(){setFilter({typ:"",produkt:"",tag:"",text:""});setZentrum(null);onClose();}} style={{fontSize:13,color:"#e63946",background:"none",border:"none",cursor:"pointer",fontWeight:600}}>{"Alles zuruecksetzen"}</button>
-          </div>
-          <div style={{fontSize:12,color:"#999",fontWeight:600,letterSpacing:.5,marginBottom:8}}>{"STANDORT & RADIUS"}</div>
-          <div style={{display:"flex",gap:8,marginBottom:8}}>
-            <input value={localOrt} onChange={function(e){setLocalOrt(e.target.value);}} onKeyDown={function(e){if(e.key==="Enter")applyOrt();}} placeholder="Ort oder PLZ..." style={{flex:1,padding:"12px 14px",borderRadius:12,border:"1px solid #e0ddd4",fontSize:15,outline:"none",background:"#faf9f5"}}/>
-            <button onClick={applyOrt} style={{padding:"12px 16px",borderRadius:12,border:"none",background:"#2d6a4f",color:"white",fontWeight:700,fontSize:15,cursor:"pointer"}}>{"OK"}</button>
-          </div>
-          <button onClick={useGPS} style={{width:"100%",padding:12,borderRadius:12,border:"1px solid #2d6a4f",background:"transparent",color:"#2d6a4f",fontWeight:600,fontSize:14,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginBottom:10}}>{"GPS Standort"}</button>
-          {sucheStatus==="notfound"&&<div style={{fontSize:13,color:"#e65100",background:"#fff3e0",borderRadius:10,padding:"10px 12px",marginBottom:10}}>{"Nicht erkannt. Versuche: "}{["Kuerten","51515","Koeln"].map(function(b){return <button key={b} onClick={function(){setLocalOrt(b);}} style={{marginLeft:6,padding:"3px 9px",borderRadius:10,border:"1px solid #e65100",background:"white",color:"#e65100",fontSize:12,cursor:"pointer"}}>{b}</button>;})}</div>}
-          {zentrum&&(
-            <div style={{background:"#e8f5e9",borderRadius:10,padding:"10px 14px",marginBottom:12}}>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
-                <span style={{fontSize:13,color:"#2d6a4f",fontWeight:600}}>{zentrum.label}</span>
-                <button onClick={function(){setZentrum(null);setLocalOrt("");setSucheStatus(null);}} style={{background:"none",border:"none",color:"#888",cursor:"pointer",fontSize:16}}>{"X"}</button>
-              </div>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <input type="range" min="1" max="100" value={radius} onChange={function(e){setRadius(Number(e.target.value));}} style={{flex:1,accentColor:"#2d6a4f"}}/>
-                <span style={{fontSize:15,fontWeight:700,color:"#2d6a4f",minWidth:50}}>{radius+" km"}</span>
-              </div>
-            </div>
-          )}
-          <div style={{fontSize:12,color:"#999",fontWeight:600,letterSpacing:.5,marginBottom:10,marginTop:8}}>{"PRODUKT"}</div>
-          <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}}>
-            {PRODUKTE.map(function(k){return <button key={k.id} onClick={function(){setFilter(function(f){return Object.assign({},f,{produkt:k.id});});}} style={{padding:"9px 14px",borderRadius:20,border:"none",cursor:"pointer",fontSize:13,fontWeight:600,background:filter.produkt===k.id?"#2d6a4f":"#f0efe8",color:filter.produkt===k.id?"white":"#555"}}>{k.icon+" "+k.label}</button>;})}
-          </div>
-          <div style={{fontSize:12,color:"#999",fontWeight:600,letterSpacing:.5,marginBottom:10}}>{"ANBIETER-TYP"}</div>
-          <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:16}}>
-            {[{id:"",label:"Alle Typen",icon:"🌿"}].concat(TYPEN).map(function(t){return <button key={t.id} onClick={function(){setFilter(function(f){return Object.assign({},f,{typ:t.id});});}} style={{padding:"13px 16px",borderRadius:12,border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:10,background:filter.typ===t.id?"#2d6a4f":"#f7f5f0",color:filter.typ===t.id?"white":"#333",fontWeight:filter.typ===t.id?700:400,fontSize:14}}><span style={{fontSize:20}}>{t.icon}</span>{t.label}</button>;})}
-          </div>
-          <div style={{fontSize:12,color:"#999",fontWeight:600,letterSpacing:.5,marginBottom:10}}>{"TAG"}</div>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:20}}>
-            {[{id:"",label:"Alle"}].concat(TAGE.map(function(t){return{id:t,label:t};})).map(function(t){return <button key={t.id} onClick={function(){setFilter(function(f){return Object.assign({},f,{tag:t.id});});}} style={{padding:"10px 14px",borderRadius:24,border:"none",cursor:"pointer",background:filter.tag===t.id?"#2d6a4f":"#f0efe8",color:filter.tag===t.id?"white":"#555",fontWeight:filter.tag===t.id?700:400,fontSize:14}}>{t.label}</button>;})}
-          </div>
-          <button onClick={onClose} style={{width:"100%",padding:16,borderRadius:14,border:"none",background:"#2d6a4f",color:"white",fontWeight:700,fontSize:16,cursor:"pointer"}}>{"Ergebnisse anzeigen"}</button>
+    <Sheet onClose={onClose} zIndex={300}>
+      <div style={{padding:"0 20px 40px"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+          <div style={{fontSize:18,fontWeight:700}}>{"Suche & Filter"}</div>
+          <button onClick={function(){setFilter({typ:"",produkt:"",tag:"",text:""});setZentrum(null);onClose();}} style={{fontSize:13,color:"#e63946",background:"none",border:"none",cursor:"pointer",fontWeight:600}}>{"Alles zurücksetzen"}</button>
         </div>
+        <div style={{fontSize:12,color:"#999",fontWeight:600,letterSpacing:.5,marginBottom:8}}>{"STANDORT & RADIUS"}</div>
+        <div style={{display:"flex",gap:8,marginBottom:8}}>
+          <input value={localOrt} onChange={function(e){setLocalOrt(e.target.value);}} onKeyDown={function(e){if(e.key==="Enter")applyOrt();}} placeholder="Ort oder PLZ..." style={{flex:1,padding:"12px 14px",borderRadius:12,border:"1px solid #e0ddd4",fontSize:15,outline:"none",background:"#faf9f5"}}/>
+          <button onClick={applyOrt} style={{padding:"12px 16px",borderRadius:12,border:"none",background:"#2d6a4f",color:"white",fontWeight:700,fontSize:15,cursor:"pointer"}}>{"OK"}</button>
+        </div>
+        <button onClick={useGPS} style={{width:"100%",padding:12,borderRadius:12,border:"1px solid #2d6a4f",background:"transparent",color:"#2d6a4f",fontWeight:600,fontSize:14,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginBottom:10}}>{"GPS Standort"}</button>
+        {sucheStatus==="notfound"&&<div style={{fontSize:13,color:"#e65100",background:"#fff3e0",borderRadius:10,padding:"10px 12px",marginBottom:10}}>{"Nicht erkannt. Versuche: "}{["Kürten","51515","Köln"].map(function(b){return <button key={b} onClick={function(){setLocalOrt(b);}} style={{marginLeft:6,padding:"3px 9px",borderRadius:10,border:"1px solid #e65100",background:"white",color:"#e65100",fontSize:12,cursor:"pointer"}}>{b}</button>;})}</div>}
+        {zentrum&&(
+          <div style={{background:"#e8f5e9",borderRadius:10,padding:"10px 14px",marginBottom:12}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <span style={{fontSize:13,color:"#2d6a4f",fontWeight:600}}>{zentrum.label}</span>
+              <button onClick={function(){setZentrum(null);setLocalOrt("");setSucheStatus(null);}} style={{background:"none",border:"none",color:"#888",cursor:"pointer",fontSize:16}}>{"X"}</button>
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <input type="range" min="1" max="100" value={radius} onChange={function(e){setRadius(Number(e.target.value));}} style={{flex:1,accentColor:"#2d6a4f"}}/>
+              <span style={{fontSize:15,fontWeight:700,color:"#2d6a4f",minWidth:50}}>{radius+" km"}</span>
+            </div>
+          </div>
+        )}
+        <div style={{fontSize:12,color:"#999",fontWeight:600,letterSpacing:.5,marginBottom:10,marginTop:8}}>{"PRODUKT"}</div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}}>
+          {PRODUKTE.map(function(k){return <button key={k.id} onClick={function(){setFilter(function(f){return Object.assign({},f,{produkt:k.id});});}} style={{padding:"9px 14px",borderRadius:20,border:"none",cursor:"pointer",fontSize:13,fontWeight:600,background:filter.produkt===k.id?"#2d6a4f":"#f0efe8",color:filter.produkt===k.id?"white":"#555"}}>{k.icon+" "+k.label}</button>;})}
+        </div>
+        <div style={{fontSize:12,color:"#999",fontWeight:600,letterSpacing:.5,marginBottom:10}}>{"ANBIETER-TYP"}</div>
+        <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:16}}>
+          {[{id:"",label:"Alle Typen",icon:"🌿"}].concat(TYPEN).map(function(t){return <button key={t.id} onClick={function(){setFilter(function(f){return Object.assign({},f,{typ:t.id});});}} style={{padding:"13px 16px",borderRadius:12,border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:10,background:filter.typ===t.id?"#2d6a4f":"#f7f5f0",color:filter.typ===t.id?"white":"#333",fontWeight:filter.typ===t.id?700:400,fontSize:14}}><span style={{fontSize:20}}>{t.icon}</span>{t.label}</button>;})}
+        </div>
+        <div style={{fontSize:12,color:"#999",fontWeight:600,letterSpacing:.5,marginBottom:10}}>{"TAG"}</div>
+        <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:20}}>
+          {[{id:"",label:"Alle"}].concat(TAGE.map(function(t){return{id:t,label:t};})).map(function(t){return <button key={t.id} onClick={function(){setFilter(function(f){return Object.assign({},f,{tag:t.id});});}} style={{padding:"10px 14px",borderRadius:24,border:"none",cursor:"pointer",background:filter.tag===t.id?"#2d6a4f":"#f0efe8",color:filter.tag===t.id?"white":"#555",fontWeight:filter.tag===t.id?700:400,fontSize:14}}>{t.label}</button>;})}
+        </div>
+        <button onClick={onClose} style={{width:"100%",padding:16,borderRadius:14,border:"none",background:"#2d6a4f",color:"white",fontWeight:700,fontSize:16,cursor:"pointer"}}>{"Ergebnisse anzeigen"}</button>
       </div>
-    </div>
+    </Sheet>
   );
 }
 
@@ -913,44 +1016,41 @@ function EintragenSheet(props) {
   function submit(){if(!form.name||!form.ort)return;setStatus("sending");sendeAnbieterVorschlag(form).then(function(){setStatus("ok");}).catch(function(){setStatus("error");});}
   var iS={width:"100%",padding:"13px 14px",borderRadius:12,border:"1px solid #e0ddd4",fontSize:15,outline:"none",background:"#faf9f5",boxSizing:"border-box"};
   return (
-    <div style={{position:"fixed",inset:0,zIndex:300,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={onClose}>
-      <div style={{background:"white",borderRadius:"20px 20px 0 0",boxShadow:"0 -4px 30px rgba(0,0,0,.18)",maxHeight:"92vh",overflowY:"auto"}} onClick={function(e){e.stopPropagation();}}>
-        <div style={{padding:"12px 0 4px",display:"flex",justifyContent:"center"}}><div style={{width:40,height:4,borderRadius:2,background:"#ddd"}}/></div>
-        <div style={{padding:"0 20px 40px"}}>
-          <div style={{fontSize:18,fontWeight:700,marginBottom:6}}>{"Anbieter vorschlagen"}</div>
-          <div style={{fontSize:13,color:"#2d6a4f",background:"#e8f5e9",borderRadius:10,padding:"10px 12px",marginBottom:18,lineHeight:1.5}}>{"Wir pruefen deinen Vorschlag und schalten ihn frei - dauert 1-2 Tage."}</div>
-          {status==="ok"
-            ?<div style={{textAlign:"center",padding:"30px 0"}}><div style={{fontSize:48}}>{"✅"}</div><div style={{fontSize:18,fontWeight:700,marginTop:12,color:"#2d6a4f"}}>{"Danke!"}</div><button onClick={onClose} style={{marginTop:20,padding:"12px 32px",borderRadius:24,border:"none",background:"#2d6a4f",color:"white",fontWeight:700,fontSize:15,cursor:"pointer"}}>{"Schliessen"}</button></div>
-            :<div style={{display:"flex",flexDirection:"column",gap:12}}>
-              <input placeholder="Name *" value={form.name} onChange={function(e){setForm(function(f){return Object.assign({},f,{name:e.target.value});});}} style={iS}/>
-              <select value={form.typ} onChange={function(e){setForm(function(f){return Object.assign({},f,{typ:e.target.value});});}} style={Object.assign({},iS,{color:"#333"})}>
-                {TYPEN.map(function(t){return <option key={t.id} value={t.id}>{t.icon+" "+t.label}</option>;})}
-              </select>
-              <input placeholder="Ort *" value={form.ort} onChange={function(e){setForm(function(f){return Object.assign({},f,{ort:e.target.value});});}} style={iS}/>
-              <input placeholder="Strasse & Hausnummer" value={form.adresse} onChange={function(e){setForm(function(f){return Object.assign({},f,{adresse:e.target.value});});}} style={iS}/>
-              <input placeholder="Angebot" value={form.angebot} onChange={function(e){setForm(function(f){return Object.assign({},f,{angebot:e.target.value});});}} style={iS}/>
-              <input placeholder="Telefon" value={form.telefon} onChange={function(e){setForm(function(f){return Object.assign({},f,{telefon:e.target.value});});}} style={iS}/>
-              <input placeholder="E-Mail" value={form.email} onChange={function(e){setForm(function(f){return Object.assign({},f,{email:e.target.value});});}} style={iS}/>
-              <div>
-                <div style={{fontSize:12,color:"#999",marginBottom:8,fontWeight:600}}>{"OEFFNUNGSTAGE"}</div>
-                <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                  {TAGE.map(function(t){return <button key={t} onClick={function(){toggleTag(t);}} style={{padding:"10px 14px",borderRadius:20,border:"none",cursor:"pointer",background:form.tage.indexOf(t)>=0?"#2d6a4f":"#f0efe8",color:form.tage.indexOf(t)>=0?"white":"#888",fontSize:14,fontWeight:600}}>{t}</button>;})}
-                </div>
+    <Sheet onClose={onClose} zIndex={300} maxHeight="92vh">
+      <div style={{padding:"0 20px 40px"}}>
+        <div style={{fontSize:18,fontWeight:700,marginBottom:6}}>{"Anbieter vorschlagen"}</div>
+        <div style={{fontSize:13,color:"#2d6a4f",background:"#e8f5e9",borderRadius:10,padding:"10px 12px",marginBottom:18,lineHeight:1.5}}>{"Wir prüfen deinen Vorschlag und schalten ihn frei – das dauert meist 1-2 Tage."}</div>
+        {status==="ok"
+          ?<div style={{textAlign:"center",padding:"30px 0"}}><div style={{fontSize:48}}>{"✅"}</div><div style={{fontSize:18,fontWeight:700,marginTop:12,color:"#2d6a4f"}}>{"Danke!"}</div><button onClick={onClose} style={{marginTop:20,padding:"12px 32px",borderRadius:24,border:"none",background:"#2d6a4f",color:"white",fontWeight:700,fontSize:15,cursor:"pointer"}}>{"Schließen"}</button></div>
+          :<div style={{display:"flex",flexDirection:"column",gap:12}}>
+            <input placeholder="Name *" value={form.name} onChange={function(e){setForm(function(f){return Object.assign({},f,{name:e.target.value});});}} style={iS}/>
+            <select value={form.typ} onChange={function(e){setForm(function(f){return Object.assign({},f,{typ:e.target.value});});}} style={Object.assign({},iS,{color:"#333"})}>
+              {TYPEN.map(function(t){return <option key={t.id} value={t.id}>{t.icon+" "+t.label}</option>;})}
+            </select>
+            <input placeholder="Ort *" value={form.ort} onChange={function(e){setForm(function(f){return Object.assign({},f,{ort:e.target.value});});}} style={iS}/>
+            <input placeholder="Straße & Hausnummer" value={form.adresse} onChange={function(e){setForm(function(f){return Object.assign({},f,{adresse:e.target.value});});}} style={iS}/>
+            <input placeholder="Angebot" value={form.angebot} onChange={function(e){setForm(function(f){return Object.assign({},f,{angebot:e.target.value});});}} style={iS}/>
+            <input placeholder="Telefon" value={form.telefon} onChange={function(e){setForm(function(f){return Object.assign({},f,{telefon:e.target.value});});}} style={iS}/>
+            <input placeholder="E-Mail" value={form.email} onChange={function(e){setForm(function(f){return Object.assign({},f,{email:e.target.value});});}} style={iS}/>
+            <div>
+              <div style={{fontSize:12,color:"#999",marginBottom:8,fontWeight:600}}>{"ÖFFNUNGSTAGE"}</div>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                {TAGE.map(function(t){return <button key={t} onClick={function(){toggleTag(t);}} style={{padding:"10px 14px",borderRadius:20,border:"none",cursor:"pointer",background:form.tage.indexOf(t)>=0?"#2d6a4f":"#f0efe8",color:form.tage.indexOf(t)>=0?"white":"#888",fontSize:14,fontWeight:600}}>{t}</button>;})}
               </div>
-              <div style={{display:"flex",gap:10}}>
-                <div style={{flex:1}}><div style={{fontSize:12,color:"#999",marginBottom:4,fontWeight:600}}>{"VON"}</div><input type="time" value={form.von} onChange={function(e){setForm(function(f){return Object.assign({},f,{von:e.target.value});});}} style={iS}/></div>
-                <div style={{flex:1}}><div style={{fontSize:12,color:"#999",marginBottom:4,fontWeight:600}}>{"BIS"}</div><input type="time" value={form.bis} onChange={function(e){setForm(function(f){return Object.assign({},f,{bis:e.target.value});});}} style={iS}/></div>
-              </div>
-              <textarea placeholder="Kurze Beschreibung (optional)" value={form.beschreibung} onChange={function(e){setForm(function(f){return Object.assign({},f,{beschreibung:e.target.value});});}} rows={3} style={Object.assign({},iS,{resize:"none"})}/>
-              {status==="error"&&<div style={{background:"#fdecea",borderRadius:10,padding:"10px 12px",fontSize:13,color:"#c62828"}}>{"Senden fehlgeschlagen."}</div>}
-              <button onClick={submit} disabled={!form.name||!form.ort||status==="sending"} style={{padding:16,borderRadius:14,border:"none",background:(!form.name||!form.ort)?"#ccc":"#2d6a4f",color:"white",fontWeight:700,fontSize:16,cursor:"pointer",marginTop:4}}>
-                {status==="sending"?"Wird gesendet...":"Vorschlag einsenden"}
-              </button>
             </div>
-          }
-        </div>
+            <div style={{display:"flex",gap:10}}>
+              <div style={{flex:1}}><div style={{fontSize:12,color:"#999",marginBottom:4,fontWeight:600}}>{"VON"}</div><input type="time" value={form.von} onChange={function(e){setForm(function(f){return Object.assign({},f,{von:e.target.value});});}} style={iS}/></div>
+              <div style={{flex:1}}><div style={{fontSize:12,color:"#999",marginBottom:4,fontWeight:600}}>{"BIS"}</div><input type="time" value={form.bis} onChange={function(e){setForm(function(f){return Object.assign({},f,{bis:e.target.value});});}} style={iS}/></div>
+            </div>
+            <textarea placeholder="Kurze Beschreibung (optional)" value={form.beschreibung} onChange={function(e){setForm(function(f){return Object.assign({},f,{beschreibung:e.target.value});});}} rows={3} style={Object.assign({},iS,{resize:"none"})}/>
+            {status==="error"&&<div style={{background:"#fdecea",borderRadius:10,padding:"10px 12px",fontSize:13,color:"#c62828"}}>{"Senden fehlgeschlagen."}</div>}
+            <button onClick={submit} disabled={!form.name||!form.ort||status==="sending"} style={{padding:16,borderRadius:14,border:"none",background:(!form.name||!form.ort)?"#ccc":"#2d6a4f",color:"white",fontWeight:700,fontSize:16,cursor:"pointer",marginTop:4}}>
+              {status==="sending"?"Wird gesendet...":"Vorschlag einsenden"}
+            </button>
+          </div>
+        }
       </div>
-    </div>
+    </Sheet>
   );
 }
 
@@ -976,6 +1076,7 @@ function HauptApp(props) {
   var monat=new Date().getMonth()+1;
 
   useEffect(function(){
+    setzeStatusbarFarbe("#2d6a4f");
     if(navigator.geolocation){navigator.geolocation.getCurrentPosition(function(p){setUserPos({lat:p.coords.latitude,lng:p.coords.longitude});},function(){});}
     try{var f=localStorage.getItem("regiomap_fav");if(f)setFavoriten(JSON.parse(f));}catch{}
     ladeAnbieter()
@@ -1008,7 +1109,7 @@ function HauptApp(props) {
 
   return (
     <div style={{minHeight:"100vh",background:"#2d6a4f",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",maxWidth:480,margin:"0 auto",display:"flex",flexDirection:"column"}}>
-      <div style={{background:"linear-gradient(135deg,#2d6a4f,#40916c)",color:"white",position:"sticky",top:0,zIndex:50}}>
+      <div style={{background:"linear-gradient(135deg,#2d6a4f,#40916c)",color:"white",position:"sticky",top:0,zIndex:50,paddingTop:"env(safe-area-inset-top)"}}>
         <div style={{padding:"14px 16px 0"}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
             <div>
@@ -1041,7 +1142,7 @@ function HauptApp(props) {
       {fehler&&<div style={{padding:"8px 16px",background:"#fff8e8",fontSize:12,color:"#e65100",borderBottom:"1px solid #ffe0b2"}}>{"⚠️ "+fehler}</div>}
       {activeFilters>0&&<div style={{padding:"7px 16px",background:"#e8f5e9",fontSize:12,color:"#2d6a4f",display:"flex",justifyContent:"space-between",alignItems:"center"}}><span>{gefiltert.length+" Anbieter"+(nurHeute?" - heute offen":"")+(nurFavoriten?" - Favoriten":"")+(zentrum?" - "+radius+"km um "+zentrum.label:"")}</span><button onClick={function(){setFilter({typ:"",produkt:"",tag:"",text:""});setZentrum(null);setNurHeute(false);setNurFavoriten(false);}} style={{background:"none",border:"none",color:"#e63946",fontSize:12,cursor:"pointer",fontWeight:600}}>{"X Reset"}</button></div>}
 
-      {laden&&<div style={{textAlign:"center",padding:40,color:"#888"}}><div style={{fontSize:32,marginBottom:8}}>{"🌿"}</div><div>{"Laedt..."}</div></div>}
+      {laden&&<div style={{textAlign:"center",padding:40,color:"#888"}}><div style={{fontSize:32,marginBottom:8}}>{"🌿"}</div><div>{"Lädt..."}</div></div>}
 
       {!laden&&ansicht==="karte"&&<Karte anbieter={gefiltert} onSelect={setSelected} zentrum={zentrum} radius={zentrum?radius:null}/>}
 
@@ -1053,7 +1154,7 @@ function HauptApp(props) {
               <div style={{fontWeight:600,color:"#555",fontSize:16,marginBottom:6}}>{nurFavoriten?"Noch keine Favoriten":"Keine Anbieter"}</div>
               <div style={{fontSize:13,color:"#999",marginBottom:20}}>{zentrum?"Nichts im "+radius+"-km-Umkreis.":"Andere Filter versuchen."}</div>
               {zentrum&&<button onClick={function(){setRadius(function(r){return Math.min(r+10,100);});}} style={{padding:13,borderRadius:12,border:"none",background:"#2d6a4f",color:"white",fontSize:14,cursor:"pointer",fontWeight:600,display:"block",margin:"0 auto 10px"}}>{"Radius erweitern"}</button>}
-              {activeFilters>0&&<button onClick={function(){setFilter({typ:"",produkt:"",tag:"",text:""});setZentrum(null);setNurHeute(false);setNurFavoriten(false);}} style={{padding:13,borderRadius:12,border:"1px solid #2d6a4f",background:"white",color:"#2d6a4f",fontSize:14,cursor:"pointer",fontWeight:600,display:"block",margin:"0 auto"}}>{"Filter zuruecksetzen"}</button>}
+              {activeFilters>0&&<button onClick={function(){setFilter({typ:"",produkt:"",tag:"",text:""});setZentrum(null);setNurHeute(false);setNurFavoriten(false);}} style={{padding:13,borderRadius:12,border:"1px solid #2d6a4f",background:"white",color:"#2d6a4f",fontSize:14,cursor:"pointer",fontWeight:600,display:"block",margin:"0 auto"}}>{"Filter zurücksetzen"}</button>}
             </div>
             :<div style={{display:"flex",flexDirection:"column",gap:10}}>
               {gefiltert.map(function(a){
@@ -1112,7 +1213,9 @@ function Startbildschirm(props) {
   var [phase,setPhase]=useState(0);
   var [zooming,setZooming]=useState(false);
   var [gone,setGone]=useState(false);
+
   useEffect(function(){
+    setzeStatusbarFarbe("#6ab4d8");
     var t1=setTimeout(function(){setPhase(1);},200);
     var t2=setTimeout(function(){setPhase(2);},1000);
     var t3=setTimeout(function(){setPhase(3);},1800);
