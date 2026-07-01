@@ -348,34 +348,81 @@ function Sheet(props) {
     setTimeout(function() { onClose(); }, 220);
   }
 
-  function onTouchStart(e) {
-    var scrollTop = contentRef.current ? contentRef.current.scrollTop : 0;
-    istWischGeste.current = scrollTop <= 0;
-    touchStartY.current = e.touches[0].clientY;
-    if (istWischGeste.current) setDragging(true);
-  }
+  // Hintergrund fixieren solange das Sheet offen ist, damit iOS die
+  // Seite dahinter nicht per Rubber-Band-Bounce mitbewegt.
+  useEffect(function() {
+    var scrollY = window.scrollY || window.pageYOffset || 0;
+    var body = document.body;
+    var vorher = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow
+    };
+    body.style.position = "fixed";
+    body.style.top = "-" + scrollY + "px";
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+    return function() {
+      body.style.position = vorher.position;
+      body.style.top = vorher.top;
+      body.style.left = vorher.left;
+      body.style.right = vorher.right;
+      body.style.width = vorher.width;
+      body.style.overflow = vorher.overflow;
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
 
-  function onTouchMove(e) {
-    if (!istWischGeste.current) return;
-    var delta = e.touches[0].clientY - touchStartY.current;
-    if (delta > 0) {
-      e.preventDefault();
-      setDragY(delta);
-    } else {
-      setDragY(0);
-    }
-  }
+  // Touch-Handler nativ (nicht-passiv) registrieren, damit preventDefault()
+  // beim Wischen zuverlaessig greift und der Hintergrund still steht -
+  // Reacts eigene onTouch-Props sind standardmaessig passiv und wuerden
+  // das native Scrollen/Bounce dahinter nicht zuverlaessig stoppen.
+  useEffect(function() {
+    var el = contentRef.current;
+    if (!el) return;
 
-  function onTouchEnd() {
-    if (!istWischGeste.current) return;
-    istWischGeste.current = false;
-    setDragging(false);
-    if (dragY > 90) {
-      schliessen();
-    } else {
-      setDragY(0);
+    function onTouchStart(e) {
+      var scrollTop = el.scrollTop;
+      istWischGeste.current = scrollTop <= 0;
+      touchStartY.current = e.touches[0].clientY;
+      if (istWischGeste.current) setDragging(true);
     }
-  }
+
+    function onTouchMove(e) {
+      if (!istWischGeste.current) return;
+      var delta = e.touches[0].clientY - touchStartY.current;
+      if (delta > 0) {
+        e.preventDefault();
+        setDragY(delta);
+      } else {
+        setDragY(0);
+      }
+    }
+
+    function onTouchEnd() {
+      if (!istWischGeste.current) return;
+      istWischGeste.current = false;
+      setDragging(false);
+      setDragY(function(aktuell) {
+        if (aktuell > 90) { schliessen(); return aktuell; }
+        return 0;
+      });
+    }
+
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    return function() {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, []);
 
   var transformWert = closing ? "translateY(100%)" : "translateY(" + dragY + "px)";
   var overlayDeckkraft = closing ? 0 : Math.max(0, 0.32 - dragY / 350);
@@ -386,16 +433,15 @@ function Sheet(props) {
         position:"fixed", inset:0, zIndex:zIndex,
         display:"flex", flexDirection:"column", justifyContent:"flex-end",
         background:"rgba(0,0,0,"+overlayDeckkraft+")",
-        transition: dragging ? "none" : "background 0.22s ease"
+        transition: dragging ? "none" : "background 0.22s ease",
+        overscrollBehavior:"none",
+        touchAction:"none"
       }}
       onClick={schliessen}
     >
       <div
         ref={contentRef}
         onClick={function(e){ e.stopPropagation(); }}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
         style={{
           background:"white", borderRadius:"20px 20px 0 0",
           boxShadow:"0 -4px 30px rgba(0,0,0,.18)",
@@ -404,6 +450,7 @@ function Sheet(props) {
           transition: dragging ? "none" : "transform 0.22s cubic-bezier(0.32,0.72,0,1)",
           paddingBottom:"env(safe-area-inset-bottom)",
           touchAction:"pan-y",
+          overscrollBehavior:"contain",
           WebkitOverflowScrolling:"touch"
         }}
       >
