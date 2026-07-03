@@ -19,6 +19,58 @@ async function sbFetch(path, opts) {
   return t ? JSON.parse(t) : null;
 }
 
+/* ─── Supabase Auth (fuer das Admin-Panel) ───
+   Nutzt den echten Supabase-Auth-Endpunkt statt eines im Code
+   versteckten Passworts - das Passwort wird bei Supabase selbst
+   geprueft und niemals im Frontend-Code gespeichert. */
+async function adminLogin(email, passwort) {
+  var res = await fetch(SUPABASE_URL + "/auth/v1/token?grant_type=password", {
+    method: "POST",
+    headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ email: email, password: passwort })
+  });
+  var data = await res.json();
+  if (!res.ok) throw new Error(data.error_description || data.msg || "Login fehlgeschlagen");
+  return data; // enthaelt access_token, refresh_token, user
+}
+
+function adminLogout() {
+  try { localStorage.removeItem("regiomap_admin_session"); } catch(e) {}
+}
+
+/* Authentifizierter Supabase-Request mit dem Nutzer-Token statt dem
+   oeffentlichen Key - so greifen die Row-Level-Security-Regeln, die
+   nur eingeloggten Admins Schreibzugriff erlauben. */
+async function sbFetchAuth(path, opts, token) {
+  opts = opts || {};
+  var res = await fetch(SUPABASE_URL + "/rest/v1/" + path, Object.assign({}, opts, {
+    headers: Object.assign({
+      "apikey": SUPABASE_KEY,
+      "Authorization": "Bearer " + token,
+      "Content-Type": "application/json",
+      "Prefer": opts.prefer || "return=representation"
+    }, opts.headers || {})
+  }));
+  if (!res.ok) { var errText = await res.text(); throw new Error("Supabase " + res.status + " " + errText); }
+  var t = await res.text();
+  return t ? JSON.parse(t) : null;
+}
+
+async function ladeUnfreigegebeneAnbieter(token) {
+  return sbFetchAuth("anbieter?freigegeben=eq.false&select=*&order=id.desc", {}, token);
+}
+
+async function setzeFreigabe(id, freigegeben, token) {
+  return sbFetchAuth("anbieter?id=eq." + id, {
+    method: "PATCH", prefer: "return=minimal",
+    body: JSON.stringify({ freigegeben: freigegeben })
+  }, token);
+}
+
+async function loescheAnbieter(id, token) {
+  return sbFetchAuth("anbieter?id=eq." + id, { method: "DELETE", prefer: "return=minimal" }, token);
+}
+
 async function ladeAnbieter() {
   var anbieter = await sbFetch("anbieter?freigegeben=eq.true&select=*");
   var ereignisse = await sbFetch("ereignisse?select=*,anmeldungen(count)");
@@ -474,8 +526,11 @@ function Karte(props) {
   var leafletRef = useRef(null);
   var markersRef = useRef([]);
   var circleRef  = useRef(null);
+  var routeRef   = useRef(null);
   var [fehler, setFehler] = useState(false);
   var [laden,  setLaden]  = useState(true);
+  var [route, setRoute]   = useState(null);
+  var [routeLaden, setRouteLaden] = useState(false);
 
   useEffect(function() {
     function initMap() {
@@ -571,8 +626,46 @@ function Karte(props) {
     }
   }
 
+  function entferneRoute() {
+    if (routeRef.current) { routeRef.current.remove(); routeRef.current = null; }
+    setRoute(null);
+  }
+
+  async function aktualisiereRoute() {
+    var L = window.L;
+    var map = leafletRef.current;
+    entferneRoute();
+    var ziel = props.routenZiel;
+    var start = props.userPos;
+    if (!L || !map || !ziel || !ziel.lat || !ziel.lng || !start) return;
+    setRouteLaden(true);
+    try {
+      var url = "https://router.project-osrm.org/route/v1/foot/"
+        + start.lng + "," + start.lat + ";" + ziel.lng + "," + ziel.lat
+        + "?overview=full&geometries=geojson";
+      var res = await fetch(url);
+      var data = await res.json();
+      if (data && data.routes && data.routes.length > 0) {
+        var r = data.routes[0];
+        var koords = r.geometry.coordinates.map(function(c) { return [c[1], c[0]]; });
+        routeRef.current = L.polyline(koords, {
+          color: "#2d6a4f", weight: 5, opacity: 0.85, dashArray: "1 8", lineCap: "round"
+        }).addTo(map);
+        map.fitBounds(routeRef.current.getBounds().pad(0.2));
+        setRoute({ km: (r.distance/1000).toFixed(1), min: Math.round(r.duration/60) });
+      }
+    } catch(e) {
+      // OSRM nicht erreichbar - Route wird einfach nicht angezeigt
+    }
+    setRouteLaden(false);
+  }
+
   useEffect(function() { aktualisiereMarker(); }, [anbieter]);
   useEffect(function() { aktualisiereKreis(); }, [zentrum, radius]);
+  useEffect(function() {
+    if (!leafletRef.current) return;
+    aktualisiereRoute();
+  }, [props.routenZiel, props.userPos, laden]);
   useEffect(function() {
     if (!leafletRef.current) return;
     setTimeout(function() { if (leafletRef.current) leafletRef.current.invalidateSize(); }, 150);
@@ -595,6 +688,18 @@ function Karte(props) {
         </div>
       )}
       <div ref={mapRef} style={{height:420,width:"100%",display:laden?"none":"block",zIndex:1}}/>
+      {routeLaden&&(
+        <div style={{position:"absolute",top:12,left:"50%",transform:"translateX(-50%)",background:"white",borderRadius:20,padding:"6px 14px",fontSize:12,color:"#2d6a4f",fontWeight:600,boxShadow:"0 2px 10px rgba(0,0,0,.15)",zIndex:3}}>
+          {"Route wird berechnet..."}
+        </div>
+      )}
+      {route&&!routeLaden&&(
+        <div style={{position:"absolute",top:12,left:"50%",transform:"translateX(-50%)",background:"#2d6a4f",borderRadius:20,padding:"7px 16px",fontSize:13,color:"white",fontWeight:700,boxShadow:"0 2px 10px rgba(0,0,0,.2)",zIndex:3,display:"flex",gap:10,alignItems:"center"}}>
+          <span>{"🚶 "+route.km+" km"}</span>
+          <span style={{opacity:.6}}>{"·"}</span>
+          <span>{"≈ "+route.min+" Min."}</span>
+        </div>
+      )}
       <div style={{display:"flex",flexWrap:"wrap",gap:6,padding:"10px 12px",position:"relative",zIndex:2}}>
         {TYPEN.map(function(t) {
           return (
@@ -1101,6 +1206,147 @@ function EintragenSheet(props) {
   );
 }
 
+/* ─── Admin-Panel ─── */
+function AdminLogin(props) {
+  var onLogin = props.onLogin;
+  var [email, setEmail] = useState("");
+  var [passwort, setPasswort] = useState("");
+  var [status, setStatus] = useState(null);
+  var [fehler, setFehler] = useState("");
+
+  function submit(e) {
+    if (e) e.preventDefault();
+    if (!email || !passwort) return;
+    setStatus("sending"); setFehler("");
+    adminLogin(email, passwort)
+      .then(function(data) {
+        try { localStorage.setItem("regiomap_admin_session", JSON.stringify(data)); } catch(err) {}
+        onLogin(data);
+      })
+      .catch(function(err) { setFehler(err.message); setStatus(null); });
+  }
+
+  var iS = {width:"100%",padding:"13px 14px",borderRadius:12,border:"1px solid #e0ddd4",fontSize:15,outline:"none",background:"#faf9f5",boxSizing:"border-box"};
+  return (
+    <div style={{minHeight:"100vh",background:"#f4f2ec",display:"flex",alignItems:"center",justifyContent:"center",padding:20,fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"}}>
+      <div style={{background:"white",borderRadius:20,padding:28,maxWidth:360,width:"100%",boxShadow:"0 4px 24px rgba(0,0,0,.08)"}}>
+        <div style={{fontSize:28,marginBottom:6}}>{"🔐"}</div>
+        <div style={{fontSize:19,fontWeight:700,marginBottom:4}}>{"RegioMap Admin"}</div>
+        <div style={{fontSize:13,color:"#888",marginBottom:20}}>{"Anmelden, um neue Anbieter freizugeben."}</div>
+        <form onSubmit={submit} style={{display:"flex",flexDirection:"column",gap:12}}>
+          <input placeholder="E-Mail" type="email" autoCapitalize="none" value={email} onChange={function(e){setEmail(e.target.value);}} style={iS}/>
+          <input placeholder="Passwort" type="password" value={passwort} onChange={function(e){setPasswort(e.target.value);}} style={iS}/>
+          {fehler&&<div style={{fontSize:13,color:"#c62828",background:"#fdecea",borderRadius:10,padding:"10px 12px"}}>{fehler}</div>}
+          <button type="submit" disabled={!email||!passwort||status==="sending"} style={{padding:14,borderRadius:12,border:"none",background:(!email||!passwort)?"#ccc":"#2d6a4f",color:"white",fontWeight:700,fontSize:15,cursor:"pointer",marginTop:4}}>
+            {status==="sending"?"Wird geprüft...":"Anmelden"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function AdminPanel() {
+  var [session, setSession] = useState(null);
+  var [liste, setListe] = useState([]);
+  var [laden, setLaden] = useState(true);
+  var [fehler, setFehler] = useState("");
+  var [aktion, setAktion] = useState(null); // id des gerade bearbeiteten Eintrags
+
+  useEffect(function() {
+    setzeStatusbarFarbe("#2d6a4f");
+    try {
+      var gespeichert = localStorage.getItem("regiomap_admin_session");
+      if (gespeichert) setSession(JSON.parse(gespeichert));
+    } catch(e) {}
+  }, []);
+
+  useEffect(function() {
+    if (!session) { setLaden(false); return; }
+    ladeListe();
+  }, [session]);
+
+  function ladeListe() {
+    setLaden(true); setFehler("");
+    ladeUnfreigegebeneAnbieter(session.access_token)
+      .then(function(d) { setListe(d || []); setLaden(false); })
+      .catch(function(e) { setFehler("Konnte Liste nicht laden: " + e.message); setLaden(false); });
+  }
+
+  function freigeben(id) {
+    setAktion(id);
+    setzeFreigabe(id, true, session.access_token)
+      .then(function() { setListe(function(l) { return l.filter(function(a) { return a.id !== id; }); }); setAktion(null); })
+      .catch(function(e) { setFehler(e.message); setAktion(null); });
+  }
+
+  function ablehnen(id) {
+    if (!window.confirm("Diesen Vorschlag wirklich endgueltig loeschen?")) return;
+    setAktion(id);
+    loescheAnbieter(id, session.access_token)
+      .then(function() { setListe(function(l) { return l.filter(function(a) { return a.id !== id; }); }); setAktion(null); })
+      .catch(function(e) { setFehler(e.message); setAktion(null); });
+  }
+
+  function logout() {
+    adminLogout();
+    setSession(null);
+  }
+
+  if (!session) return <AdminLogin onLogin={setSession}/>;
+
+  return (
+    <div style={{minHeight:"100vh",background:"#f4f2ec",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"}}>
+      <div style={{background:"linear-gradient(135deg,#2d6a4f,#40916c)",color:"white",padding:"16px 20px",paddingTop:"calc(16px + env(safe-area-inset-top))",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <div>
+          <div style={{fontSize:18,fontWeight:800}}>{"RegioMap Admin"}</div>
+          <div style={{fontSize:11,opacity:.75}}>{session.user&&session.user.email}</div>
+        </div>
+        <button onClick={logout} style={{background:"rgba(255,255,255,0.2)",border:"none",borderRadius:16,padding:"8px 14px",color:"white",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Abmelden"}</button>
+      </div>
+      <div style={{padding:20,maxWidth:600,margin:"0 auto"}}>
+        {fehler&&<div style={{background:"#fdecea",color:"#c62828",borderRadius:10,padding:"10px 14px",fontSize:13,marginBottom:16}}>{fehler}</div>}
+        <div style={{fontSize:14,color:"#555",marginBottom:16,fontWeight:600}}>{laden?"Lädt...":liste.length+" wartende Vorschläge"}</div>
+        {!laden&&liste.length===0&&(
+          <div style={{textAlign:"center",padding:"48px 20px",color:"#999"}}>
+            <div style={{fontSize:36,marginBottom:10}}>{"✅"}</div>
+            <div>{"Alles freigegeben - keine offenen Vorschläge."}</div>
+          </div>
+        )}
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          {liste.map(function(a) {
+            var typ = TYPEN.find(function(t) { return t.id === a.typ; });
+            return (
+              <div key={a.id} style={{background:"white",borderRadius:16,padding:18,boxShadow:"0 2px 8px rgba(0,0,0,.05)"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
+                  <div>
+                    <div style={{fontSize:16,fontWeight:700}}>{a.name}</div>
+                    <div style={{fontSize:12,color:"#888",marginTop:2}}>{(typ?typ.icon+" "+typ.label:a.typ)+" · "+a.ort}</div>
+                  </div>
+                </div>
+                {a.adresse&&<div style={{fontSize:13,color:"#555",marginBottom:4}}>{"📍 "+a.adresse+", "+a.ort}</div>}
+                {a.angebot&&<div style={{fontSize:13,color:"#555",marginBottom:4}}>{"🛒 "+a.angebot}</div>}
+                {a.tage&&a.tage.length>0&&<div style={{fontSize:13,color:"#555",marginBottom:4}}>{"📅 "+a.tage.join(", ")+" · "+(a.von||"")+" - "+(a.bis||"")}</div>}
+                {(a.telefon||a.email)&&<div style={{fontSize:13,color:"#555",marginBottom:4}}>{[a.telefon,a.email].filter(Boolean).join(" · ")}</div>}
+                {a.beschreibung&&<div style={{fontSize:13,color:"#777",marginTop:6,fontStyle:"italic"}}>{a.beschreibung}</div>}
+                {(a.lat&&a.lng)?<div style={{fontSize:12,color:"#2d6a4f",marginTop:6}}>{"✅ Koordinaten gefunden"}</div>:<div style={{fontSize:12,color:"#e65100",marginTop:6}}>{"⚠️ Keine Koordinaten - Adresse prüfen"}</div>}
+                <div style={{display:"flex",gap:8,marginTop:14}}>
+                  <button onClick={function(){freigeben(a.id);}} disabled={aktion===a.id} style={{flex:1,padding:11,borderRadius:10,border:"none",background:"#2d6a4f",color:"white",fontWeight:700,fontSize:14,cursor:"pointer"}}>
+                    {aktion===a.id?"...":"Freigeben"}
+                  </button>
+                  <button onClick={function(){ablehnen(a.id);}} disabled={aktion===a.id} style={{flex:1,padding:11,borderRadius:10,border:"1px solid #e63946",background:"white",color:"#e63946",fontWeight:700,fontSize:14,cursor:"pointer"}}>
+                    {"Löschen"}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── HauptApp ─── */
 function HauptApp(props) {
   var startEintragen=props.startEintragen||false;
@@ -1121,6 +1367,18 @@ function HauptApp(props) {
   var [nurFavoriten,setNurFavoriten]=useState(false);
   var heute=["So","Mo","Di","Mi","Do","Fr","Sa"][new Date().getDay()];
   var monat=new Date().getMonth()+1;
+  var adminTapCount=useRef(0);
+  var adminTapTimer=useRef(null);
+
+  function adminTap(){
+    adminTapCount.current=adminTapCount.current+1;
+    if(adminTapTimer.current) clearTimeout(adminTapTimer.current);
+    adminTapTimer.current=setTimeout(function(){adminTapCount.current=0;},1500);
+    if(adminTapCount.current>=5){
+      adminTapCount.current=0;
+      window.location.hash="#admin";
+    }
+  }
 
   useEffect(function(){
     setzeStatusbarFarbe("#2d6a4f");
@@ -1159,7 +1417,7 @@ function HauptApp(props) {
       <div style={{background:"linear-gradient(135deg,#2d6a4f,#40916c)",color:"white",position:"sticky",top:0,zIndex:50,paddingTop:"env(safe-area-inset-top)"}}>
         <div style={{padding:"14px 16px 0"}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-            <div>
+            <div onClick={adminTap} style={{cursor:"default"}}>
               <div style={{fontSize:22,fontWeight:800,letterSpacing:2}}>{"RegioMap"}</div>
               <div style={{fontSize:10,opacity:.7,letterSpacing:.5}}>{"Lokale & Regionale Erzeuger"}</div>
             </div>
@@ -1191,7 +1449,7 @@ function HauptApp(props) {
 
       {laden&&<div style={{textAlign:"center",padding:40,color:"#888"}}><div style={{fontSize:32,marginBottom:8}}>{"🌿"}</div><div>{"Lädt..."}</div></div>}
 
-      {!laden&&ansicht==="karte"&&<Karte anbieter={gefiltert} onSelect={setSelected} zentrum={zentrum} radius={zentrum?radius:null}/>}
+      {!laden&&ansicht==="karte"&&<Karte anbieter={gefiltert} onSelect={setSelected} zentrum={zentrum} radius={zentrum?radius:null} userPos={userPos} routenZiel={selected}/>}
 
       {!laden&&ansicht==="liste"&&(
         <div style={{padding:"12px 12px 100px",flex:1,overflowY:"auto"}}>
@@ -1360,6 +1618,26 @@ function Startbildschirm(props) {
 export default function App() {
   var [started,setStarted]=useState(false);
   var [direktEintragen,setDirektEintragen]=useState(false);
+  var [istAdmin,setIstAdmin]=useState(function(){
+    try { return window.location.hash === "#admin"; } catch(e) { return false; }
+  });
+
+  useEffect(function() {
+    function onHashChange() {
+      setIstAdmin(window.location.hash === "#admin");
+    }
+    window.addEventListener("hashchange", onHashChange);
+    return function() { window.removeEventListener("hashchange", onHashChange); };
+  }, []);
+
+  useEffect(function() {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/service-worker.js").catch(function() {});
+    }
+  }, []);
+
+  if (istAdmin) return <AdminPanel/>;
+
   return started
     ? <HauptApp startEintragen={direktEintragen}/>
     : <Startbildschirm
