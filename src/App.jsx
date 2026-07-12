@@ -186,7 +186,9 @@ async function sendeAnmeldung(ereignisId, form) {
     method: "POST", prefer: "return=minimal",
     body: JSON.stringify({
       ereignis_id: ereignisId, name: form.name, email: form.email,
-      telefon: form.telefon || null, personen: parseInt(form.personen) || 1,
+      telefon: form.telefon || null, adresse: form.adresse || null,
+      verbindlich_bestaetigt: !!form.verbindlichBestaetigt,
+      personen: parseInt(form.personen) || 1,
       nachricht: form.nachricht || null
     })
   });
@@ -886,7 +888,7 @@ function StornoInfo(props) {
 /* ─── AnmeldeSheet ─── */
 function AnmeldeSheet(props) {
   var ereignis=props.ereignis, anbieter=props.anbieter, onClose=props.onClose;
-  var [form,setForm]=useState({name:"",email:"",telefon:"",nachricht:"",personen:"1"});
+  var [form,setForm]=useState({name:"",email:"",telefon:"",adresse:"",nachricht:"",personen:"1",verbindlichBestaetigt:false});
   var [status,setStatus]=useState(null);
   var [showStorno,setShowStorno]=useState(false);
   var [stornoEmail,setStornoEmail]=useState("");
@@ -896,7 +898,12 @@ function AnmeldeSheet(props) {
   var stornoKostenlos=tageBis>frist;
   var datum=new Date(ereignis.datum).toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
   var typIcons={ernte:"🌾","pflück":"🌿",schlacht:"🥩"};
-  function submit(){if(!form.name||!form.email)return;setStatus("sending");sendeAnmeldung(ereignis.id,form).then(function(){setStatus("ok");}).catch(function(){setStatus("error");});}
+  var stufe=ereignis.verbindlichkeit||"locker";
+  var telefonPflicht=stufe==="mittel"||stufe==="streng";
+  var adressePflicht=stufe==="streng";
+  var bestaetigungPflicht=stufe==="streng";
+  var kannAbsenden=form.name&&form.email&&(!telefonPflicht||form.telefon)&&(!adressePflicht||form.adresse)&&(!bestaetigungPflicht||form.verbindlichBestaetigt);
+  function submit(){if(!kannAbsenden)return;setStatus("sending");sendeAnmeldung(ereignis.id,form).then(function(){setStatus("ok");}).catch(function(){setStatus("error");});}
   function submitStorno(){if(!stornoEmail)return;setStornoStatus("sending");sendeStornierung(ereignis.id,stornoEmail).then(function(){setStornoStatus("ok");}).catch(function(){setStornoStatus("error");});}
   var iS={width:"100%",padding:"12px 14px",borderRadius:12,border:"1px solid #e0ddd4",fontSize:15,outline:"none",background:"#faf9f5",boxSizing:"border-box"};
   return (
@@ -911,6 +918,13 @@ function AnmeldeSheet(props) {
         <div style={{fontSize:13,color:"#555",marginBottom:14}}>{"📍 "+anbieter.name+", "+anbieter.ort}</div>
         <StornoInfo ereignis={ereignis}/>
         {ereignis.mindestAnmeldungen&&<div style={{background:"#f3e8ff",borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:12,color:"#6a0dad"}}>{"Mindestteilnahme: "+ereignis.mindestAnmeldungen+" Personen."}</div>}
+        {stufe!=="locker"&&!showStorno&&status!=="ok"&&(
+          <div style={{background:"#fff3e0",borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:12,color:"#e65100",lineHeight:1.5}}>
+            {stufe==="mittel"
+              ?"Für diesen Termin verlangt der Anbieter zusätzlich eine Telefonnummer, um die Anmeldung verbindlicher zu machen."
+              :"Für diesen Termin verlangt der Anbieter vollständige Angaben (Name, Adresse, Telefon) sowie eine Bestätigung, da er besonders verbindlich ist."}
+          </div>
+        )}
         {ereignis.typ==="schlacht"&&!showStorno&&status!=="ok"&&(
           <div style={{background:"linear-gradient(135deg,#3d2b1f,#5a3e2b)",borderRadius:14,padding:16,marginBottom:16,color:"white"}}>
             <div style={{fontSize:15,fontWeight:700,marginBottom:8}}>{"Ein Wort bevor du dich anmeldest"}</div>
@@ -925,7 +939,8 @@ function AnmeldeSheet(props) {
             {ereignis.plaetze&&<div style={{background:"#fff8e8",borderRadius:10,padding:"8px 12px",fontSize:13,color:"#e65100"}}>{"Noch "+(ereignis.plaetze-ereignis.anmeldungen)+" von "+ereignis.plaetze+" Plätzen frei"}</div>}
             <input placeholder="Dein Name *" value={form.name} onChange={function(e){setForm(function(f){return Object.assign({},f,{name:e.target.value});});}} style={iS}/>
             <input placeholder="E-Mail *" type="email" value={form.email} onChange={function(e){setForm(function(f){return Object.assign({},f,{email:e.target.value});});}} style={iS}/>
-            <input placeholder="Telefon (optional)" type="tel" value={form.telefon} onChange={function(e){setForm(function(f){return Object.assign({},f,{telefon:e.target.value});});}} style={iS}/>
+            <input placeholder={telefonPflicht?"Telefon *":"Telefon (optional)"} type="tel" value={form.telefon} onChange={function(e){setForm(function(f){return Object.assign({},f,{telefon:e.target.value});});}} style={iS}/>
+            {adressePflicht&&<input placeholder="Adresse *" value={form.adresse} onChange={function(e){setForm(function(f){return Object.assign({},f,{adresse:e.target.value});});}} style={iS}/>}
             <div>
               <div style={{fontSize:12,color:"#999",marginBottom:6,fontWeight:600}}>{"PERSONEN"}</div>
               <div style={{display:"flex",gap:8}}>
@@ -933,8 +948,14 @@ function AnmeldeSheet(props) {
               </div>
             </div>
             <textarea placeholder="Nachricht (optional)" value={form.nachricht} onChange={function(e){setForm(function(f){return Object.assign({},f,{nachricht:e.target.value});});}} rows={2} style={Object.assign({},iS,{resize:"none"})}/>
+            {bestaetigungPflicht&&(
+              <label style={{display:"flex",gap:10,alignItems:"flex-start",background:"#fdecea",borderRadius:12,padding:"12px 14px",cursor:"pointer"}}>
+                <input type="checkbox" checked={form.verbindlichBestaetigt} onChange={function(e){setForm(function(f){return Object.assign({},f,{verbindlichBestaetigt:e.target.checked});});}} style={{marginTop:2}}/>
+                <span style={{fontSize:12,color:"#c62828",lineHeight:1.5}}>{"Ich bestätige, dass ich verbindlich erscheine, und akzeptiere die oben genannten Stornobedingungen inklusive möglicher Stornogebühr."}</span>
+              </label>
+            )}
             {status==="error"&&<div style={{background:"#fdecea",borderRadius:10,padding:"10px 12px",fontSize:13,color:"#c62828"}}>{"Senden fehlgeschlagen."}</div>}
-            <button onClick={submit} disabled={!form.name||!form.email||status==="sending"} style={{padding:16,borderRadius:14,border:"none",background:(!form.name||!form.email)?"#ccc":"#2d6a4f",color:"white",fontWeight:700,fontSize:16,cursor:"pointer"}}>
+            <button onClick={submit} disabled={!kannAbsenden||status==="sending"} style={{padding:16,borderRadius:14,border:"none",background:!kannAbsenden?"#ccc":"#2d6a4f",color:"white",fontWeight:700,fontSize:16,cursor:"pointer"}}>
               {status==="sending"?"Wird gesendet...":"Verbindlich anmelden"}
             </button>
           </div>
@@ -1359,7 +1380,7 @@ function AdminPanel() {
 /* ─── Erzeuger-Panel ─── */
 function ErzeugerTerminForm(props) {
   var anbieterId = props.anbieterId, token = props.token, onFertig = props.onFertig, onAbbrechen = props.onAbbrechen;
-  var [form, setForm] = useState({typ:"ernte", titel:"", datum:"", beschreibung:"", plaetze:"", stornoFristTage:"3", stornoGebuehr:"0", mindestAnmeldungen:""});
+  var [form, setForm] = useState({typ:"ernte", titel:"", datum:"", beschreibung:"", plaetze:"", stornoFristTage:"3", stornoGebuehr:"0", mindestAnmeldungen:"", verbindlichkeit:"locker"});
   var [status, setStatus] = useState(null);
   var [fehler, setFehler] = useState("");
 
@@ -1376,6 +1397,7 @@ function ErzeugerTerminForm(props) {
       storno_frist_tage: form.stornoFristTage ? parseInt(form.stornoFristTage) : 0,
       storno_gebuehr: form.stornoGebuehr ? parseFloat(form.stornoGebuehr) : 0,
       mindest_anmeldungen: form.mindestAnmeldungen ? parseInt(form.mindestAnmeldungen) : null,
+      verbindlichkeit: form.verbindlichkeit,
       abgesagt: false
     }, token)
       .then(function() { onFertig(); })
@@ -1396,6 +1418,15 @@ function ErzeugerTerminForm(props) {
         <div>
           <div style={{fontSize:12,color:"#999",marginBottom:4,fontWeight:600}}>{"DATUM *"}</div>
           <input type="date" value={form.datum} onChange={function(e){setForm(function(f){return Object.assign({},f,{datum:e.target.value});});}} style={iS}/>
+        </div>
+        <div>
+          <div style={{fontSize:12,color:"#999",marginBottom:4,fontWeight:600}}>{"VERBINDLICHKEIT DER ANMELDUNG"}</div>
+          <div style={{fontSize:12,color:"#777",marginBottom:8,lineHeight:1.5}}>{"Du legst hiermit fest, wie verbindlich sich Teilnehmer anmelden müssen - je strenger, desto mehr Daten muss der Teilnehmer angeben. Das schützt dich z.B. bei der Stornogebühr, ersetzt aber keine Rechtsberatung."}</div>
+          <select value={form.verbindlichkeit} onChange={function(e){setForm(function(f){return Object.assign({},f,{verbindlichkeit:e.target.value});});}} style={Object.assign({},iS,{color:"#333"})}>
+            <option value="locker">{"Locker - nur Name & E-Mail"}</option>
+            <option value="mittel">{"Mittel - zusätzlich Telefon Pflicht"}</option>
+            <option value="streng">{"Streng - Name, Adresse, Telefon + Bestätigungs-Häkchen Pflicht"}</option>
+          </select>
         </div>
         <textarea placeholder="Beschreibung" value={form.beschreibung} onChange={function(e){setForm(function(f){return Object.assign({},f,{beschreibung:e.target.value});});}} rows={2} style={Object.assign({},iS,{resize:"none"})}/>
         <div style={{display:"flex",gap:10}}>
