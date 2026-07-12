@@ -71,6 +71,46 @@ async function loescheAnbieter(id, token) {
   return sbFetchAuth("anbieter?id=eq." + id, { method: "DELETE", prefer: "return=minimal" }, token);
 }
 
+/* ─── Erzeuger-Funktionen (eigener Login, eigene Daten) ─── */
+async function ladeEigenenAnbieter(token) {
+  var r = await sbFetchAuth("anbieter?select=*&order=id.desc", {}, token);
+  return (r && r[0]) || null;
+}
+
+async function aktualisiereEigenenAnbieter(id, updates, token) {
+  return sbFetchAuth("anbieter?id=eq." + id, {
+    method: "PATCH", prefer: "return=minimal",
+    body: JSON.stringify(updates)
+  }, token);
+}
+
+async function ladeEigeneEreignisse(anbieterId, token) {
+  var r = await sbFetchAuth("ereignisse?anbieter_id=eq." + anbieterId + "&select=*,anmeldungen(count)&order=datum.desc", {}, token);
+  return (r || []).map(function(e) {
+    return Object.assign({}, e, {
+      anmeldungen: (e.anmeldungen && e.anmeldungen[0]) ? e.anmeldungen[0].count : 0
+    });
+  });
+}
+
+async function erstelleEreignis(daten, token) {
+  return sbFetchAuth("ereignisse", {
+    method: "POST", prefer: "return=minimal",
+    body: JSON.stringify(daten)
+  }, token);
+}
+
+async function sageEreignisAbAuth(id, token) {
+  return sbFetchAuth("ereignisse?id=eq." + id, {
+    method: "PATCH", prefer: "return=minimal",
+    body: JSON.stringify({ abgesagt: true })
+  }, token);
+}
+
+async function loescheEreignisAuth(id, token) {
+  return sbFetchAuth("ereignisse?id=eq." + id, { method: "DELETE", prefer: "return=minimal" }, token);
+}
+
 async function ladeAnbieter() {
   var anbieter = await sbFetch("anbieter?freigegeben=eq.true&select=*");
   var ereignisse = await sbFetch("ereignisse?select=*,anmeldungen(count)");
@@ -158,13 +198,6 @@ async function sendeStornierung(ereignisId, email) {
   return sbFetch("anmeldungen?id=eq." + rows[0].id, {
     method: "PATCH", prefer: "return=minimal",
     body: JSON.stringify({ storniert: true, storno_datum: new Date().toISOString() })
-  });
-}
-
-async function sendeEreignisAbsage(ereignisId) {
-  return sbFetch("ereignisse?id=eq." + ereignisId, {
-    method: "PATCH", prefer: "return=minimal",
-    body: JSON.stringify({ abgesagt: true })
   });
 }
 
@@ -849,34 +882,6 @@ function StornoInfo(props) {
   );
 }
 
-/* ─── ErzeugerAbsage ─── */
-function ErzeugerAbsageButton(props) {
-  var ereignis=props.ereignis, anbieter=props.anbieter;
-  var [status,setStatus]=useState(null);
-  var [confirm,setConfirm]=useState(false);
-  function sendAbsage() {
-    setStatus("sending");
-    sendeEreignisAbsage(ereignis.id).then(function(){setStatus("ok");setConfirm(false);}).catch(function(){setStatus("error");});
-  }
-  if(status==="ok") return <div style={{marginTop:8,background:"#e8f5e9",borderRadius:10,padding:"10px 12px",fontSize:12,color:"#2d6a4f",textAlign:"center"}}>{"Absage versendet."}</div>;
-  return (
-    <div style={{marginTop:8}}>
-      {!confirm
-        ?<button onClick={function(){setConfirm(true);}} style={{width:"100%",padding:10,borderRadius:12,border:"1px solid #e63946",background:"#fdecea",color:"#c62828",fontWeight:600,fontSize:13,cursor:"pointer"}}>
-          {"Termin absagen ("+ereignis.anmeldungen+"/"+(ereignis.mindestAnmeldungen||"?")+" Anmeldungen)"}
-        </button>
-        :<div style={{background:"#fdecea",borderRadius:12,padding:12,border:"1px solid #e63946"}}>
-          <div style={{fontSize:13,fontWeight:700,color:"#c62828",marginBottom:6}}>{"Wirklich absagen?"}</div>
-          <div style={{fontSize:12,color:"#555",marginBottom:10}}>{"Alle "+ereignis.anmeldungen+" Teilnehmer werden informiert."}</div>
-          <div style={{display:"flex",gap:8}}>
-            <button onClick={function(){setConfirm(false);}} style={{flex:1,padding:10,borderRadius:10,border:"none",background:"#f0efe8",color:"#666",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Abbrechen"}</button>
-            <button onClick={sendAbsage} disabled={status==="sending"} style={{flex:1,padding:10,borderRadius:10,border:"none",background:"#e63946",color:"white",fontWeight:700,fontSize:13,cursor:"pointer"}}>{status==="sending"?"Sendet...":"Ja, absagen"}</button>
-          </div>
-        </div>
-      }
-    </div>
-  );
-}
 
 /* ─── AnmeldeSheet ─── */
 function AnmeldeSheet(props) {
@@ -1073,7 +1078,7 @@ function AnbieterSheet(props) {
                         <button onClick={function(){if(!ausgebucht)setAnmeldeEreignis(ev);}} style={{width:"100%",padding:11,borderRadius:12,border:"none",cursor:ausgebucht?"default":"pointer",fontWeight:700,fontSize:14,background:ausgebucht?"#f0efe8":"#2d6a4f",color:ausgebucht?"#aaa":"white"}}>
                           {ausgebucht?"Ausgebucht":"Jetzt anmelden"}
                         </button>
-                        {ev.mindestAnmeldungen&&ev.anmeldungen<ev.mindestAnmeldungen&&<ErzeugerAbsageButton ereignis={ev} anbieter={a}/>}
+                        {/* Termin-Absage durch den Erzeuger laeuft jetzt ueber den Erzeuger-Login (#erzeuger), nicht mehr oeffentlich ohne Anmeldung */}
                       </div>
                     </div>
                   );
@@ -1207,8 +1212,12 @@ function EintragenSheet(props) {
 }
 
 /* ─── Admin-Panel ─── */
-function AdminLogin(props) {
+function SupabaseLogin(props) {
   var onLogin = props.onLogin;
+  var titel = props.titel || "RegioMap Admin";
+  var beschreibung = props.beschreibung || "Anmelden, um fortzufahren.";
+  var icon = props.icon || "🔐";
+  var speicherSchluessel = props.speicherSchluessel;
   var [email, setEmail] = useState("");
   var [passwort, setPasswort] = useState("");
   var [status, setStatus] = useState(null);
@@ -1220,7 +1229,7 @@ function AdminLogin(props) {
     setStatus("sending"); setFehler("");
     adminLogin(email, passwort)
       .then(function(data) {
-        try { localStorage.setItem("regiomap_admin_session", JSON.stringify(data)); } catch(err) {}
+        try { localStorage.setItem(speicherSchluessel, JSON.stringify(data)); } catch(err) {}
         onLogin(data);
       })
       .catch(function(err) { setFehler(err.message); setStatus(null); });
@@ -1230,9 +1239,9 @@ function AdminLogin(props) {
   return (
     <div style={{minHeight:"100vh",background:"#f4f2ec",display:"flex",alignItems:"center",justifyContent:"center",padding:20,fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"}}>
       <div style={{background:"white",borderRadius:20,padding:28,maxWidth:360,width:"100%",boxShadow:"0 4px 24px rgba(0,0,0,.08)"}}>
-        <div style={{fontSize:28,marginBottom:6}}>{"🔐"}</div>
-        <div style={{fontSize:19,fontWeight:700,marginBottom:4}}>{"RegioMap Admin"}</div>
-        <div style={{fontSize:13,color:"#888",marginBottom:20}}>{"Anmelden, um neue Anbieter freizugeben."}</div>
+        <div style={{fontSize:28,marginBottom:6}}>{icon}</div>
+        <div style={{fontSize:19,fontWeight:700,marginBottom:4}}>{titel}</div>
+        <div style={{fontSize:13,color:"#888",marginBottom:20}}>{beschreibung}</div>
         <form onSubmit={submit} style={{display:"flex",flexDirection:"column",gap:12}}>
           <input placeholder="E-Mail" type="email" autoCapitalize="none" value={email} onChange={function(e){setEmail(e.target.value);}} style={iS}/>
           <input placeholder="Passwort" type="password" value={passwort} onChange={function(e){setPasswort(e.target.value);}} style={iS}/>
@@ -1293,7 +1302,7 @@ function AdminPanel() {
     setSession(null);
   }
 
-  if (!session) return <AdminLogin onLogin={setSession}/>;
+  if (!session) return <SupabaseLogin onLogin={setSession} titel="RegioMap Admin" beschreibung="Anmelden, um neue Anbieter freizugeben." icon="🔐" speicherSchluessel="regiomap_admin_session"/>;
 
   return (
     <div style={{minHeight:"100vh",background:"#f4f2ec",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"}}>
@@ -1342,6 +1351,255 @@ function AdminPanel() {
             );
           })}
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Erzeuger-Panel ─── */
+function ErzeugerTerminForm(props) {
+  var anbieterId = props.anbieterId, token = props.token, onFertig = props.onFertig, onAbbrechen = props.onAbbrechen;
+  var [form, setForm] = useState({typ:"ernte", titel:"", datum:"", beschreibung:"", plaetze:"", stornoFristTage:"3", stornoGebuehr:"0", mindestAnmeldungen:""});
+  var [status, setStatus] = useState(null);
+  var [fehler, setFehler] = useState("");
+
+  function submit() {
+    if (!form.titel || !form.datum) return;
+    setStatus("sending"); setFehler("");
+    erstelleEreignis({
+      anbieter_id: anbieterId,
+      typ: form.typ,
+      titel: form.titel,
+      datum: form.datum,
+      beschreibung: form.beschreibung || null,
+      plaetze: form.plaetze ? parseInt(form.plaetze) : null,
+      storno_frist_tage: form.stornoFristTage ? parseInt(form.stornoFristTage) : 0,
+      storno_gebuehr: form.stornoGebuehr ? parseFloat(form.stornoGebuehr) : 0,
+      mindest_anmeldungen: form.mindestAnmeldungen ? parseInt(form.mindestAnmeldungen) : null,
+      abgesagt: false
+    }, token)
+      .then(function() { onFertig(); })
+      .catch(function(e) { setFehler(e.message); setStatus(null); });
+  }
+
+  var iS = {width:"100%",padding:"12px 14px",borderRadius:12,border:"1px solid #e0ddd4",fontSize:15,outline:"none",background:"#faf9f5",boxSizing:"border-box"};
+  return (
+    <div style={{background:"#f8f8f5",borderRadius:14,padding:16,marginBottom:14}}>
+      <div style={{fontSize:14,fontWeight:700,marginBottom:12}}>{"Neuer Termin"}</div>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        <select value={form.typ} onChange={function(e){setForm(function(f){return Object.assign({},f,{typ:e.target.value});});}} style={Object.assign({},iS,{color:"#333"})}>
+          <option value="ernte">{"🌾 Ernte"}</option>
+          <option value="pflück">{"🌿 Pflücken"}</option>
+          <option value="schlacht">{"🥩 Schlachtung"}</option>
+        </select>
+        <input placeholder="Titel *" value={form.titel} onChange={function(e){setForm(function(f){return Object.assign({},f,{titel:e.target.value});});}} style={iS}/>
+        <div>
+          <div style={{fontSize:12,color:"#999",marginBottom:4,fontWeight:600}}>{"DATUM *"}</div>
+          <input type="date" value={form.datum} onChange={function(e){setForm(function(f){return Object.assign({},f,{datum:e.target.value});});}} style={iS}/>
+        </div>
+        <textarea placeholder="Beschreibung" value={form.beschreibung} onChange={function(e){setForm(function(f){return Object.assign({},f,{beschreibung:e.target.value});});}} rows={2} style={Object.assign({},iS,{resize:"none"})}/>
+        <div style={{display:"flex",gap:10}}>
+          <div style={{flex:1}}><div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"PLÄTZE (leer = unbegrenzt)"}</div><input type="number" min="0" value={form.plaetze} onChange={function(e){setForm(function(f){return Object.assign({},f,{plaetze:e.target.value});});}} style={iS}/></div>
+          <div style={{flex:1}}><div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"MIN. ANMELDUNGEN"}</div><input type="number" min="0" value={form.mindestAnmeldungen} onChange={function(e){setForm(function(f){return Object.assign({},f,{mindestAnmeldungen:e.target.value});});}} style={iS}/></div>
+        </div>
+        <div style={{display:"flex",gap:10}}>
+          <div style={{flex:1}}><div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"STORNOFRIST (TAGE)"}</div><input type="number" min="0" value={form.stornoFristTage} onChange={function(e){setForm(function(f){return Object.assign({},f,{stornoFristTage:e.target.value});});}} style={iS}/></div>
+          <div style={{flex:1}}><div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"STORNOGEBÜHR (EUR)"}</div><input type="number" min="0" value={form.stornoGebuehr} onChange={function(e){setForm(function(f){return Object.assign({},f,{stornoGebuehr:e.target.value});});}} style={iS}/></div>
+        </div>
+        {fehler&&<div style={{fontSize:13,color:"#c62828",background:"#fdecea",borderRadius:10,padding:"10px 12px"}}>{fehler}</div>}
+        <div style={{display:"flex",gap:8}}>
+          <button onClick={onAbbrechen} style={{flex:1,padding:12,borderRadius:10,border:"none",background:"#f0efe8",color:"#666",fontWeight:600,fontSize:14,cursor:"pointer"}}>{"Abbrechen"}</button>
+          <button onClick={submit} disabled={!form.titel||!form.datum||status==="sending"} style={{flex:2,padding:12,borderRadius:10,border:"none",background:(!form.titel||!form.datum)?"#ccc":"#2d6a4f",color:"white",fontWeight:700,fontSize:14,cursor:"pointer"}}>
+            {status==="sending"?"Wird erstellt...":"Termin veröffentlichen"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ErzeugerPanel() {
+  var [session, setSession] = useState(null);
+  var [anbieter, setAnbieter] = useState(null);
+  var [form, setForm] = useState(null);
+  var [ereignisse, setEreignisse] = useState([]);
+  var [laden, setLaden] = useState(true);
+  var [speichern, setSpeichern] = useState(null);
+  var [fehler, setFehler] = useState("");
+  var [neuerTermin, setNeuerTermin] = useState(false);
+  var [aktion, setAktion] = useState(null);
+
+  useEffect(function() {
+    setzeStatusbarFarbe("#2d6a4f");
+    try {
+      var gespeichert = localStorage.getItem("regiomap_erzeuger_session");
+      if (gespeichert) setSession(JSON.parse(gespeichert));
+    } catch(e) {}
+  }, []);
+
+  useEffect(function() {
+    if (!session) { setLaden(false); return; }
+    laden_();
+  }, [session]);
+
+  function laden_() {
+    setLaden(true); setFehler("");
+    ladeEigenenAnbieter(session.access_token)
+      .then(function(a) {
+        setAnbieter(a);
+        if (a) {
+          setForm({
+            angebot: a.angebot || "", beschreibung: a.beschreibung || "",
+            tage: a.tage || [], von: a.von || "08:00", bis: a.bis || "18:00",
+            telefon: a.telefon || "", email: a.email || ""
+          });
+          return ladeEigeneEreignisse(a.id, session.access_token);
+        }
+        return [];
+      })
+      .then(function(ev) { setEreignisse(ev || []); setLaden(false); })
+      .catch(function(e) { setFehler("Fehler beim Laden: " + e.message); setLaden(false); });
+  }
+
+  function speichernKlick() {
+    setSpeichern("sending");
+    aktualisiereEigenenAnbieter(anbieter.id, {
+      angebot: form.angebot, beschreibung: form.beschreibung, tage: form.tage,
+      von: form.von, bis: form.bis, telefon: form.telefon, email: form.email
+    }, session.access_token)
+      .then(function() { setSpeichern("ok"); setTimeout(function(){setSpeichern(null);}, 2000); })
+      .catch(function(e) { setFehler(e.message); setSpeichern(null); });
+  }
+
+  function toggleTag(t) {
+    setForm(function(f) {
+      var tage = f.tage.indexOf(t) >= 0 ? f.tage.filter(function(x){return x!==t;}) : f.tage.concat([t]);
+      return Object.assign({}, f, {tage: tage});
+    });
+  }
+
+  function terminAbsagen(id) {
+    if (!window.confirm("Diesen Termin wirklich absagen? Angemeldete Personen werden nicht automatisch benachrichtigt.")) return;
+    setAktion(id);
+    sageEreignisAbAuth(id, session.access_token)
+      .then(function() { return ladeEigeneEreignisse(anbieter.id, session.access_token); })
+      .then(function(ev) { setEreignisse(ev || []); setAktion(null); })
+      .catch(function(e) { setFehler(e.message); setAktion(null); });
+  }
+
+  function terminLoeschen(id) {
+    if (!window.confirm("Diesen Termin endgültig löschen?")) return;
+    setAktion(id);
+    loescheEreignisAuth(id, session.access_token)
+      .then(function() { return ladeEigeneEreignisse(anbieter.id, session.access_token); })
+      .then(function(ev) { setEreignisse(ev || []); setAktion(null); })
+      .catch(function(e) { setFehler(e.message); setAktion(null); });
+  }
+
+  function logout() {
+    try { localStorage.removeItem("regiomap_erzeuger_session"); } catch(e) {}
+    setSession(null); setAnbieter(null); setForm(null); setEreignisse([]);
+  }
+
+  if (!session) return <SupabaseLogin onLogin={setSession} titel="Erzeuger-Login" beschreibung="Melde dich an, um deinen Eintrag und deine Termine zu pflegen." icon="🌾" speicherSchluessel="regiomap_erzeuger_session"/>;
+
+  var iS = {width:"100%",padding:"12px 14px",borderRadius:12,border:"1px solid #e0ddd4",fontSize:15,outline:"none",background:"#faf9f5",boxSizing:"border-box"};
+
+  return (
+    <div style={{minHeight:"100vh",background:"#f4f2ec",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"}}>
+      <div style={{background:"linear-gradient(135deg,#2d6a4f,#40916c)",color:"white",padding:"16px 20px",paddingTop:"calc(16px + env(safe-area-inset-top))",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <div>
+          <div style={{fontSize:18,fontWeight:800}}>{"Mein RegioMap-Eintrag"}</div>
+          <div style={{fontSize:11,opacity:.75}}>{session.user&&session.user.email}</div>
+        </div>
+        <button onClick={logout} style={{background:"rgba(255,255,255,0.2)",border:"none",borderRadius:16,padding:"8px 14px",color:"white",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Abmelden"}</button>
+      </div>
+      <div style={{padding:20,maxWidth:600,margin:"0 auto"}}>
+        {fehler&&<div style={{background:"#fdecea",color:"#c62828",borderRadius:10,padding:"10px 14px",fontSize:13,marginBottom:16}}>{fehler}</div>}
+        {laden&&<div style={{textAlign:"center",padding:40,color:"#888"}}>{"Lädt..."}</div>}
+
+        {!laden&&!anbieter&&(
+          <div style={{background:"white",borderRadius:16,padding:24,textAlign:"center"}}>
+            <div style={{fontSize:36,marginBottom:10}}>{"🔍"}</div>
+            <div style={{fontWeight:700,marginBottom:6}}>{"Kein Eintrag verknüpft"}</div>
+            <div style={{fontSize:13,color:"#888"}}>{"Dein Konto ist noch keinem Anbieter-Eintrag zugeordnet. Melde dich beim RegioMap-Team, damit dein Zugang mit deinem Eintrag verknüpft wird."}</div>
+          </div>
+        )}
+
+        {!laden&&anbieter&&form&&(
+          <div>
+            <div style={{background:"white",borderRadius:16,padding:20,marginBottom:16}}>
+              <div style={{fontSize:17,fontWeight:700,marginBottom:2}}>{anbieter.name}</div>
+              <div style={{fontSize:12,color:"#888",marginBottom:16}}>{anbieter.ort+(anbieter.freigegeben?"":" · wartet noch auf Freigabe")}</div>
+              <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                <div>
+                  <div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"ANGEBOT"}</div>
+                  <input value={form.angebot} onChange={function(e){setForm(function(f){return Object.assign({},f,{angebot:e.target.value});});}} style={iS}/>
+                </div>
+                <div>
+                  <div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"BESCHREIBUNG"}</div>
+                  <textarea value={form.beschreibung} onChange={function(e){setForm(function(f){return Object.assign({},f,{beschreibung:e.target.value});});}} rows={3} style={Object.assign({},iS,{resize:"none"})}/>
+                </div>
+                <div>
+                  <div style={{fontSize:11,color:"#999",marginBottom:6,fontWeight:600}}>{"ÖFFNUNGSTAGE"}</div>
+                  <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                    {TAGE.map(function(t){return <button key={t} onClick={function(){toggleTag(t);}} style={{padding:"9px 13px",borderRadius:18,border:"none",cursor:"pointer",background:form.tage.indexOf(t)>=0?"#2d6a4f":"#f0efe8",color:form.tage.indexOf(t)>=0?"white":"#888",fontSize:13,fontWeight:600}}>{t}</button>;})}
+                  </div>
+                </div>
+                <div style={{display:"flex",gap:10}}>
+                  <div style={{flex:1}}><div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"VON"}</div><input type="time" value={form.von} onChange={function(e){setForm(function(f){return Object.assign({},f,{von:e.target.value});});}} style={iS}/></div>
+                  <div style={{flex:1}}><div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"BIS"}</div><input type="time" value={form.bis} onChange={function(e){setForm(function(f){return Object.assign({},f,{bis:e.target.value});});}} style={iS}/></div>
+                </div>
+                <div>
+                  <div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"TELEFON"}</div>
+                  <input value={form.telefon} onChange={function(e){setForm(function(f){return Object.assign({},f,{telefon:e.target.value});});}} style={iS}/>
+                </div>
+                <div>
+                  <div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"E-MAIL"}</div>
+                  <input value={form.email} onChange={function(e){setForm(function(f){return Object.assign({},f,{email:e.target.value});});}} style={iS}/>
+                </div>
+                <button onClick={speichernKlick} disabled={speichern==="sending"} style={{padding:14,borderRadius:12,border:"none",background:speichern==="ok"?"#2d6a4f":"#2d6a4f",color:"white",fontWeight:700,fontSize:15,cursor:"pointer",marginTop:4}}>
+                  {speichern==="sending"?"Wird gespeichert...":speichern==="ok"?"✅ Gespeichert":"Speichern"}
+                </button>
+              </div>
+            </div>
+
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+              <div style={{fontSize:15,fontWeight:700}}>{"Meine Termine"}</div>
+              {!neuerTermin&&<button onClick={function(){setNeuerTermin(true);}} style={{padding:"8px 14px",borderRadius:16,border:"none",background:"#2d6a4f",color:"white",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"+ Neuer Termin"}</button>}
+            </div>
+
+            {neuerTermin&&<ErzeugerTerminForm anbieterId={anbieter.id} token={session.access_token} onFertig={function(){setNeuerTermin(false);laden_();}} onAbbrechen={function(){setNeuerTermin(false);}}/>}
+
+            {ereignisse.length===0&&!neuerTermin&&(
+              <div style={{textAlign:"center",padding:"32px 0",color:"#999",fontSize:13}}>{"Noch keine Termine angelegt."}</div>
+            )}
+
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              {ereignisse.map(function(ev) {
+                var typLabels={ernte:"Ernte","pflück":"Pflücken",schlacht:"Schlachtung"};
+                var evDatum = new Date(ev.datum).toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
+                return (
+                  <div key={ev.id} style={{background:"white",borderRadius:14,padding:16,opacity:ev.abgesagt?0.5:1}}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
+                      <div>
+                        <div style={{fontSize:14,fontWeight:700}}>{ev.titel+(ev.abgesagt?" (abgesagt)":"")}</div>
+                        <div style={{fontSize:12,color:"#888"}}>{evDatum+" · "+(typLabels[ev.typ]||ev.typ)}</div>
+                      </div>
+                      <div style={{fontSize:12,color:"#2d6a4f",fontWeight:700}}>{ev.anmeldungen+(ev.plaetze?"/"+ev.plaetze:"")+" Anmeldungen"}</div>
+                    </div>
+                    {!ev.abgesagt&&(
+                      <div style={{display:"flex",gap:8,marginTop:8}}>
+                        <button onClick={function(){terminAbsagen(ev.id);}} disabled={aktion===ev.id} style={{flex:1,padding:9,borderRadius:9,border:"1px solid #e65100",background:"white",color:"#e65100",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Absagen"}</button>
+                        <button onClick={function(){terminLoeschen(ev.id);}} disabled={aktion===ev.id} style={{flex:1,padding:9,borderRadius:9,border:"1px solid #e63946",background:"white",color:"#e63946",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Löschen"}</button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1618,13 +1876,13 @@ function Startbildschirm(props) {
 export default function App() {
   var [started,setStarted]=useState(false);
   var [direktEintragen,setDirektEintragen]=useState(false);
-  var [istAdmin,setIstAdmin]=useState(function(){
-    try { return window.location.hash === "#admin"; } catch(e) { return false; }
+  var [route,setRoute]=useState(function(){
+    try { return window.location.hash; } catch(e) { return ""; }
   });
 
   useEffect(function() {
     function onHashChange() {
-      setIstAdmin(window.location.hash === "#admin");
+      setRoute(window.location.hash);
     }
     window.addEventListener("hashchange", onHashChange);
     return function() { window.removeEventListener("hashchange", onHashChange); };
@@ -1636,7 +1894,8 @@ export default function App() {
     }
   }, []);
 
-  if (istAdmin) return <AdminPanel/>;
+  if (route === "#admin") return <AdminPanel/>;
+  if (route === "#erzeuger") return <ErzeugerPanel/>;
 
   return started
     ? <HauptApp startEintragen={direktEintragen}/>
