@@ -1449,6 +1449,7 @@ function ErzeugerPanel() {
         setAnbieter(a);
         if (a) {
           setForm({
+            name: a.name || "", adresse: a.adresse || "", ort: a.ort || "",
             angebot: a.angebot || "", beschreibung: a.beschreibung || "",
             tage: a.tage || [], von: a.von || "08:00", bis: a.bis || "18:00",
             telefon: a.telefon || "", email: a.email || ""
@@ -1464,6 +1465,7 @@ function ErzeugerPanel() {
   function speichernKlick() {
     setSpeichern("sending");
     aktualisiereEigenenAnbieter(anbieter.id, {
+      name: form.name, adresse: form.adresse, ort: form.ort,
       angebot: form.angebot, beschreibung: form.beschreibung, tage: form.tage,
       von: form.von, bis: form.bis, telefon: form.telefon, email: form.email
     }, session.access_token)
@@ -1529,9 +1531,21 @@ function ErzeugerPanel() {
         {!laden&&anbieter&&form&&(
           <div>
             <div style={{background:"white",borderRadius:16,padding:20,marginBottom:16}}>
-              <div style={{fontSize:17,fontWeight:700,marginBottom:2}}>{anbieter.name}</div>
-              <div style={{fontSize:12,color:"#888",marginBottom:16}}>{anbieter.ort+(anbieter.freigegeben?"":" · wartet noch auf Freigabe")}</div>
+              <div style={{fontSize:12,color:"#888",marginBottom:16}}>{anbieter.freigegeben?"":"⏳ Wartet noch auf Freigabe durch das RegioMap-Team"}</div>
               <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                <div>
+                  <div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"NAME"}</div>
+                  <input value={form.name} onChange={function(e){setForm(function(f){return Object.assign({},f,{name:e.target.value});});}} style={iS}/>
+                </div>
+                <div>
+                  <div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"ADRESSE"}</div>
+                  <input value={form.adresse} onChange={function(e){setForm(function(f){return Object.assign({},f,{adresse:e.target.value});});}} style={iS}/>
+                  <div style={{fontSize:11,color:"#b08800",marginTop:4}}>{"Hinweis: Bei Adressänderung wird die Position auf der Karte nicht automatisch aktualisiert – melde dich in dem Fall zusätzlich beim RegioMap-Team."}</div>
+                </div>
+                <div>
+                  <div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"ORT"}</div>
+                  <input value={form.ort} onChange={function(e){setForm(function(f){return Object.assign({},f,{ort:e.target.value});});}} style={iS}/>
+                </div>
                 <div>
                   <div style={{fontSize:11,color:"#999",marginBottom:4,fontWeight:600}}>{"ANGEBOT"}</div>
                   <input value={form.angebot} onChange={function(e){setForm(function(f){return Object.assign({},f,{angebot:e.target.value});});}} style={iS}/>
