@@ -101,14 +101,22 @@ async function erstelleEreignis(daten, token) {
 }
 
 async function sageEreignisAbAuth(id, token) {
-  return sbFetchAuth("ereignisse?id=eq." + id, {
-    method: "PATCH", prefer: "return=minimal",
+  var result = await sbFetchAuth("ereignisse?id=eq." + id, {
+    method: "PATCH", prefer: "return=representation",
     body: JSON.stringify({ abgesagt: true })
   }, token);
+  if (!result || result.length === 0) {
+    throw new Error("Änderung wurde nicht gespeichert - keine Berechtigung für diesen Termin (bitte RegioMap-Team kontaktieren) oder Termin existiert nicht mehr.");
+  }
+  return result;
 }
 
 async function loescheEreignisAuth(id, token) {
-  return sbFetchAuth("ereignisse?id=eq." + id, { method: "DELETE", prefer: "return=minimal" }, token);
+  var result = await sbFetchAuth("ereignisse?id=eq." + id, { method: "DELETE", prefer: "return=representation" }, token);
+  if (!result || result.length === 0) {
+    throw new Error("Löschen fehlgeschlagen - keine Berechtigung für diesen Termin (bitte RegioMap-Team kontaktieren) oder Termin existiert nicht mehr.");
+  }
+  return result;
 }
 
 async function ladeAnbieter() {
