@@ -119,6 +119,55 @@ async function loescheEreignisAuth(id, token) {
   return result;
 }
 
+/* ─── E-Mail-Benachrichtigung bei Termin-Absage (ueber EmailJS) ───
+   WICHTIG: Diese drei Werte muessen mit den echten Werten aus eurem
+   EmailJS-Konto ersetzt werden (siehe Anleitung) - ohne sie werden
+   keine E-Mails verschickt, der Rest der App funktioniert aber weiter
+   ganz normal. */
+var EMAILJS_PUBLIC_KEY = "iL9L0NDdMUP-9g70y";
+var EMAILJS_SERVICE_ID = "service_0fwyn08";
+var EMAILJS_TEMPLATE_ID_ABSAGE = "template_mp3hfd8";
+
+function ladeEmailJs() {
+  return new Promise(function(resolve, reject) {
+    if (window.emailjs) { resolve(window.emailjs); return; }
+    var script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+    script.onload = function() { resolve(window.emailjs); };
+    script.onerror = function() { reject(new Error("EmailJS konnte nicht geladen werden.")); };
+    document.head.appendChild(script);
+  });
+}
+
+async function ladeAktiveAnmeldungen(ereignisId, token) {
+  return sbFetchAuth("anmeldungen?ereignis_id=eq." + ereignisId + "&storniert=eq.false&select=name,email,personen", {}, token);
+}
+
+/* Verschickt eine Absage-Mail an jeden Teilnehmer. Schlaegt eine
+   einzelne Mail fehl, werden die anderen trotzdem weiterversendet -
+   Promise.allSettled statt Promise.all. Gibt zurueck, wie viele
+   erfolgreich waren. */
+async function sendeAbsageEmails(teilnehmer, ereignis, anbieter) {
+  if (!teilnehmer || teilnehmer.length === 0) return { erfolgreich: 0, gesamt: 0 };
+  if (EMAILJS_PUBLIC_KEY.indexOf("HIER_") === 0) {
+    throw new Error("E-Mail-Versand ist noch nicht eingerichtet (EmailJS-Zugangsdaten fehlen im Code).");
+  }
+  var emailjs = await ladeEmailJs();
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+  var datum = new Date(ereignis.datum).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });
+  var ergebnisse = await Promise.allSettled(teilnehmer.map(function(t) {
+    return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID_ABSAGE, {
+      to_email: t.email,
+      to_name: t.name,
+      event_title: ereignis.titel,
+      event_date: datum,
+      provider_name: anbieter.name
+    });
+  }));
+  var erfolgreich = ergebnisse.filter(function(r) { return r.status === "fulfilled"; }).length;
+  return { erfolgreich: erfolgreich, gesamt: teilnehmer.length };
+}
+
 async function ladeAnbieter() {
   var anbieter = await sbFetch("anbieter?freigegeben=eq.true&select=*");
   var ereignisse = await sbFetch("ereignisse?select=*,anmeldungen(count)");
@@ -1467,6 +1516,7 @@ function ErzeugerPanel() {
   var [fehler, setFehler] = useState("");
   var [neuerTermin, setNeuerTermin] = useState(false);
   var [aktion, setAktion] = useState(null);
+  var [hinweis, setHinweis] = useState("");
 
   useEffect(function() {
     setzeStatusbarFarbe("#2d6a4f");
@@ -1520,11 +1570,25 @@ function ErzeugerPanel() {
   }
 
   function terminAbsagen(id) {
-    if (!window.confirm("Diesen Termin wirklich absagen? Angemeldete Personen werden nicht automatisch benachrichtigt.")) return;
-    setAktion(id);
-    sageEreignisAbAuth(id, session.access_token)
+    if (!window.confirm("Diesen Termin wirklich absagen? Angemeldete Personen werden per E-Mail benachrichtigt.")) return;
+    setAktion(id); setHinweis(""); setFehler("");
+    var ereignis = ereignisse.find(function(e) { return e.id === id; });
+    var teilnehmerListe = [];
+    ladeAktiveAnmeldungen(id, session.access_token)
+      .then(function(teilnehmer) { teilnehmerListe = teilnehmer || []; return sageEreignisAbAuth(id, session.access_token); })
       .then(function() { return ladeEigeneEreignisse(anbieter.id, session.access_token); })
-      .then(function(ev) { setEreignisse(ev || []); setAktion(null); })
+      .then(function(ev) {
+        setEreignisse(ev || []);
+        return sendeAbsageEmails(teilnehmerListe, ereignis, anbieter)
+          .then(function(ergebnis) {
+            if (ergebnis.gesamt === 0) setHinweis("Termin abgesagt. Es gab keine aktiven Anmeldungen.");
+            else setHinweis("Termin abgesagt. " + ergebnis.erfolgreich + " von " + ergebnis.gesamt + " Teilnehmern per E-Mail benachrichtigt.");
+          })
+          .catch(function(e) {
+            setHinweis("Termin wurde abgesagt, aber die Benachrichtigungs-E-Mails konnten nicht verschickt werden: " + e.message);
+          });
+      })
+      .then(function() { setAktion(null); })
       .catch(function(e) { setFehler(e.message); setAktion(null); });
   }
 
@@ -1557,6 +1621,7 @@ function ErzeugerPanel() {
       </div>
       <div style={{padding:20,maxWidth:600,margin:"0 auto"}}>
         {fehler&&<div style={{background:"#fdecea",color:"#c62828",borderRadius:10,padding:"10px 14px",fontSize:13,marginBottom:16}}>{fehler}</div>}
+        {hinweis&&<div style={{background:"#e8f5e9",color:"#2d6a4f",borderRadius:10,padding:"10px 14px",fontSize:13,marginBottom:16}}>{hinweis}</div>}
         {laden&&<div style={{textAlign:"center",padding:40,color:"#888"}}>{"Lädt..."}</div>}
 
         {!laden&&!anbieter&&(
