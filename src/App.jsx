@@ -124,9 +124,9 @@ async function loescheEreignisAuth(id, token) {
    EmailJS-Konto ersetzt werden (siehe Anleitung) - ohne sie werden
    keine E-Mails verschickt, der Rest der App funktioniert aber weiter
    ganz normal. */
-var EMAILJS_PUBLIC_KEY = "iL9L0NDdMUP-9g70y";
-var EMAILJS_SERVICE_ID = "service_2sgs70b";
-var EMAILJS_TEMPLATE_ID_ABSAGE = "template_mp3hfd8";
+var EMAILJS_PUBLIC_KEY = "HIER_PUBLIC_KEY_EINFUEGEN";
+var EMAILJS_SERVICE_ID = "HIER_SERVICE_ID_EINFUEGEN";
+var EMAILJS_TEMPLATE_ID_ABSAGE = "HIER_TEMPLATE_ID_EINFUEGEN";
 
 function ladeEmailJs() {
   return new Promise(function(resolve, reject) {
@@ -1436,8 +1436,11 @@ function AdminPanel() {
 
 /* ─── Erzeuger-Panel ─── */
 function ErzeugerTerminForm(props) {
-  var anbieterId = props.anbieterId, token = props.token, onFertig = props.onFertig, onAbbrechen = props.onAbbrechen;
-  var [form, setForm] = useState({typ:"ernte", titel:"", datum:"", beschreibung:"", plaetze:"", stornoFristTage:"3", stornoGebuehr:"0", mindestAnmeldungen:"", verbindlichkeit:"locker"});
+  var anbieterId = props.anbieterId, token = props.token, onFertig = props.onFertig, onAbbrechen = props.onAbbrechen, vorlage = props.vorlage;
+  var [form, setForm] = useState(function() {
+    if (vorlage) return Object.assign({datum:""}, vorlage);
+    return {typ:"ernte", titel:"", datum:"", beschreibung:"", plaetze:"", stornoFristTage:"3", stornoGebuehr:"0", mindestAnmeldungen:"", verbindlichkeit:"locker"};
+  });
   var [status, setStatus] = useState(null);
   var [fehler, setFehler] = useState("");
 
@@ -1464,7 +1467,8 @@ function ErzeugerTerminForm(props) {
   var iS = {width:"100%",padding:"12px 14px",borderRadius:12,border:"1px solid #e0ddd4",fontSize:15,outline:"none",background:"#faf9f5",boxSizing:"border-box"};
   return (
     <div style={{background:"#f8f8f5",borderRadius:14,padding:16,marginBottom:14}}>
-      <div style={{fontSize:14,fontWeight:700,marginBottom:12}}>{"Neuer Termin"}</div>
+      <div style={{fontSize:14,fontWeight:700,marginBottom:4}}>{"Neuer Termin"}</div>
+      {vorlage&&<div style={{fontSize:12,color:"#2d6a4f",marginBottom:10}}>{"Daten aus Vorlage übernommen – nur Datum ergänzen und ggf. anpassen."}</div>}
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
         <select value={form.typ} onChange={function(e){setForm(function(f){return Object.assign({},f,{typ:e.target.value});});}} style={Object.assign({},iS,{color:"#333"})}>
           <option value="ernte">{"🌾 Ernte"}</option>
@@ -1515,6 +1519,19 @@ function ErzeugerPanel() {
   var [speichern, setSpeichern] = useState(null);
   var [fehler, setFehler] = useState("");
   var [neuerTermin, setNeuerTermin] = useState(false);
+  var [vorlage, setVorlage] = useState(null);
+
+  function terminAlsVorlageNutzen(ev) {
+    setVorlage({
+      typ: ev.typ, titel: ev.titel, beschreibung: ev.beschreibung || "",
+      plaetze: ev.plaetze != null ? String(ev.plaetze) : "",
+      stornoFristTage: ev.stornoFristTage != null ? String(ev.stornoFristTage) : "0",
+      stornoGebuehr: ev.stornoGebuehr != null ? String(ev.stornoGebuehr) : "0",
+      mindestAnmeldungen: ev.mindestAnmeldungen != null ? String(ev.mindestAnmeldungen) : "",
+      verbindlichkeit: ev.verbindlichkeit || "locker"
+    });
+    setNeuerTermin(true);
+  }
   var [aktion, setAktion] = useState(null);
   var [hinweis, setHinweis] = useState("");
 
@@ -1684,10 +1701,10 @@ function ErzeugerPanel() {
 
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
               <div style={{fontSize:15,fontWeight:700}}>{"Meine Termine"}</div>
-              {!neuerTermin&&<button onClick={function(){setNeuerTermin(true);}} style={{padding:"8px 14px",borderRadius:16,border:"none",background:"#2d6a4f",color:"white",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"+ Neuer Termin"}</button>}
+              {!neuerTermin&&<button onClick={function(){setVorlage(null);setNeuerTermin(true);}} style={{padding:"8px 14px",borderRadius:16,border:"none",background:"#2d6a4f",color:"white",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"+ Neuer Termin"}</button>}
             </div>
 
-            {neuerTermin&&<ErzeugerTerminForm anbieterId={anbieter.id} token={session.access_token} onFertig={function(){setNeuerTermin(false);laden_();}} onAbbrechen={function(){setNeuerTermin(false);}}/>}
+            {neuerTermin&&<ErzeugerTerminForm anbieterId={anbieter.id} token={session.access_token} vorlage={vorlage} onFertig={function(){setNeuerTermin(false);setVorlage(null);laden_();}} onAbbrechen={function(){setNeuerTermin(false);setVorlage(null);}}/>}
 
             {ereignisse.length===0&&!neuerTermin&&(
               <div style={{textAlign:"center",padding:"32px 0",color:"#999",fontSize:13}}>{"Noch keine Termine angelegt."}</div>
@@ -1706,12 +1723,11 @@ function ErzeugerPanel() {
                       </div>
                       <div style={{fontSize:12,color:"#2d6a4f",fontWeight:700}}>{ev.anmeldungen+(ev.plaetze?"/"+ev.plaetze:"")+" Anmeldungen"}</div>
                     </div>
-                    {!ev.abgesagt&&(
-                      <div style={{display:"flex",gap:8,marginTop:8}}>
-                        <button onClick={function(){terminAbsagen(ev.id);}} disabled={aktion===ev.id} style={{flex:1,padding:9,borderRadius:9,border:"1px solid #e65100",background:"white",color:"#e65100",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Absagen"}</button>
-                        <button onClick={function(){terminLoeschen(ev.id);}} disabled={aktion===ev.id} style={{flex:1,padding:9,borderRadius:9,border:"1px solid #e63946",background:"white",color:"#e63946",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Löschen"}</button>
-                      </div>
-                    )}
+                    <div style={{display:"flex",gap:8,marginTop:8}}>
+                      {!ev.abgesagt&&<button onClick={function(){terminAbsagen(ev.id);}} disabled={aktion===ev.id} style={{flex:1,padding:9,borderRadius:9,border:"1px solid #e65100",background:"white",color:"#e65100",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Absagen"}</button>}
+                      <button onClick={function(){terminAlsVorlageNutzen(ev);}} style={{flex:1,padding:9,borderRadius:9,border:"1px solid #2d6a4f",background:"white",color:"#2d6a4f",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Als Vorlage nutzen"}</button>
+                      <button onClick={function(){terminLoeschen(ev.id);}} disabled={aktion===ev.id} style={{flex:1,padding:9,borderRadius:9,border:"1px solid #e63946",background:"white",color:"#e63946",fontWeight:600,fontSize:13,cursor:"pointer"}}>{"Löschen"}</button>
+                    </div>
                   </div>
                 );
               })}
