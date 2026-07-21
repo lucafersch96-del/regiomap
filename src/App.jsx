@@ -125,7 +125,7 @@ async function loescheEreignisAuth(id, token) {
    keine E-Mails verschickt, der Rest der App funktioniert aber weiter
    ganz normal. */
 var EMAILJS_PUBLIC_KEY = "iL9L0NDdMUP-9g70y";
-var EMAILJS_SERVICE_ID = "service_0fwyn08";
+var EMAILJS_SERVICE_ID = "service_2sgs70b";
 var EMAILJS_TEMPLATE_ID_ABSAGE = "template_mp3hfd8";
 
 function ladeEmailJs() {
